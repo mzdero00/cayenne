@@ -33,11 +33,19 @@ export default function UserDropdown({ username, userId }: Props) {
       {/* Username (clickable on all sizes) */}
       <span
         onClick={() => setUserOpen((prev) => !prev)}
-        className={`cursor-pointer font-medium text-black px-2 py-1 transition-all duration-150 hover:scale-[1.05] hover:text-custom_black ${
+        className={`group relative cursor-pointer font-medium text-black px-2 py-1 transition-all duration-150 ${
           userOpen ? "text-custom_black font-semibold" : ""
         }`}
       >
-        {username}
+        <span className="relative z-10 group-hover:text-primary_orange transition-colors duration-200">
+          {username}
+        </span>
+        <span
+          className={`absolute left-0 bottom-0 h-[2px] bg-primary_orange transition-all duration-300 ${
+            userOpen ? "w-full" : "w-0 group-hover:w-full"
+          }`}
+          aria-hidden="true"
+        />
       </span>
 
       {/* Hamburger icon (mobile only) */}

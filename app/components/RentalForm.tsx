@@ -75,7 +75,7 @@ export default function RentalForm() {
       <select
         value={form.carClass}
         onChange={(e) => handleChange("carClass", e.target.value)}
-        className="p-3 rounded-md bg-white/70 col-span-1 md:col-span-2"
+        className="p-3 rounded-md bg-white/70 text-black w-full col-span-1 md:col-span-2"
       >
         <option value="">Class (any)</option>
         {classes.map((cls) => (

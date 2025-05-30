@@ -1,45 +1,15 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { auth } from "@/auth";
-import UserDropdown from "../components/UserDropdown";
+import UserDropdown from "./UserDropdown";
 import { githubSignIn } from "../actions/signIn";
 
-export default function NavbarWrapper() {
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 5); // change threshold if needed
-    };
-
-    console.log(window.scrollY);
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  return (
-    <div
-      className={`fixed top-0 left-0 w-full z-50 transition-colors duration-300 ${
-        scrolled
-          ? "bg-primary_orange shadow-md"
-          : "bg-gradient-to-b from-[rgba(0,0,0,0.09)] to-[rgba(0,0,0,0.01)]"
-      }`}
-    >
-      <NavbarContent />
-    </div>
-  );
-}
-
-async function NavbarContent() {
+export default async function NavbarContent() {
   const session = await auth();
 
   return (
     <nav className="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
-      {/* Logo */}
       <Link href="/">
         <Image
           src="/logo.png"
@@ -50,14 +20,12 @@ async function NavbarContent() {
         />
       </Link>
 
-      {/* Center links */}
       <div className="hidden md:flex gap-10 text-lg font-medium text-black">
         <NavLink href="/cars">Car Selection</NavLink>
         <NavLink href="/explore">Exploring Dalmatia</NavLink>
         <NavLink href="/about">About Us</NavLink>
       </div>
 
-      {/* Auth section */}
       {session?.user ? (
         <UserDropdown
           username={session.user.name ?? "User"}
@@ -90,11 +58,26 @@ const NavLink = ({
 }: {
   href: string;
   children: React.ReactNode;
-}) => (
-  <Link
-    href={href}
-    className="transition-all duration-150 hover:scale-[1.05] hover:text-custom_black"
-  >
-    {children}
-  </Link>
-);
+}) => {
+  const pathname = usePathname();
+  const isActive = pathname === href;
+
+  return (
+    <Link
+      href={href}
+      className={`group relative inline-block text-black px-2 py-1 transition-all duration-150 ${
+        isActive ? "text-black font-semibold" : ""
+      }`}
+    >
+      <span className="relative z-10 group-hover:text-black transition-colors duration-200">
+        {children}
+      </span>
+      <span
+        className={`absolute left-0 bottom-0 h-[2px] bg-primary_orange transition-all duration-250 ${
+          isActive ? "w-full" : "w-0 group-hover:w-full"
+        }`}
+        aria-hidden="true"
+      />
+    </Link>
+  );
+};
