@@ -1,0 +1,88 @@
+"use client";
+
+import Link from "next/link";
+import { useState, useRef, useEffect } from "react";
+import { logout } from "@/app/actions/logout";
+import { Menu } from "lucide-react";
+
+type Props = {
+  username: string;
+  userId: string;
+};
+
+export default function UserDropdown({ username, userId }: Props) {
+  const [userOpen, setUserOpen] = useState(false);
+  const [navOpen, setNavOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setUserOpen(false);
+        setNavOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const linkStyle = "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100";
+
+  return (
+    <div ref={ref} className="relative flex items-center gap-2">
+      {/* Username (clickable on all sizes) */}
+      <span
+        onClick={() => setUserOpen((prev) => !prev)}
+        className={`cursor-pointer font-medium text-black px-2 py-1 transition-all duration-150 hover:scale-[1.05] hover:text-custom_black ${
+          userOpen ? "text-custom_black font-semibold" : ""
+        }`}
+      >
+        {username}
+      </span>
+
+      {/* Hamburger icon (mobile only) */}
+      <button
+        onClick={() => setNavOpen((prev) => !prev)}
+        className="md:hidden p-2"
+        aria-label="Toggle nav menu"
+      >
+        <Menu className="w-6 h-6 text-black" />
+      </button>
+
+      {/* User dropdown (shown on all sizes when userOpen) */}
+      {userOpen && (
+        <div className="absolute right-0 top-full mt-2 w-48 bg-white shadow-lg rounded-md py-2 z-50">
+          <Link href="/reservations" className={linkStyle}>
+            My Reservations
+          </Link>
+          <Link href={`/user/${userId}/settings`} className={linkStyle}>
+            Profile Settings
+          </Link>
+          <form action={logout}>
+            <button
+              type="submit"
+              className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+            >
+              Logout
+            </button>
+          </form>
+        </div>
+      )}
+
+      {/* Nav menu dropdown (only mobile) */}
+      {navOpen && (
+        <div className="absolute right-0 top-full mt-2 w-56 bg-white shadow-lg rounded-md py-2 z-50 block md:hidden">
+          <Link href="/cars" className={linkStyle}>
+            Car Selection
+          </Link>
+          <Link href="/explore" className={linkStyle}>
+            Exploring Dalmatia
+          </Link>
+          <Link href="/about" className={linkStyle}>
+            About Us
+          </Link>
+        </div>
+      )}
+    </div>
+  );
+}
