@@ -1,11 +1,30 @@
+// app/login/page.tsx
 "use client";
 
+import { Suspense, useState } from "react";
 import Image from "next/image";
 import { supabaseBrowser } from "@/lib/supabase-browser";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
 
+/** Wrapper that provides the Suspense boundary */
 export default function LoginPage() {
+  return (
+    <Suspense fallback={<PageFallback />}>
+      <LoginInner />
+    </Suspense>
+  );
+}
+
+function PageFallback() {
+  return (
+    <main className="relative min-h-screen bg-[#2b3238] text-white grid place-items-center">
+      <div className="text-white/80">Loading…</div>
+    </main>
+  );
+}
+
+/** The actual page content that uses useSearchParams */
+function LoginInner() {
   const router = useRouter();
   const search = useSearchParams();
   const [pending, setPending] = useState(false);
@@ -32,7 +51,7 @@ export default function LoginPage() {
     const supabase = supabaseBrowser();
     await supabase.auth.signInWithOAuth({
       provider: "github",
-      options: { redirectTo: `${window.location.origin}/` }, // go home after OAuth
+      options: { redirectTo: `${window.location.origin}/` },
     });
   }
 
@@ -93,7 +112,6 @@ export default function LoginPage() {
               </div>
             </form>
 
-            {/* Optional: GitHub sign-in button (remove if you want to match the image exactly) */}
             <div className="mt-6 flex items-center justify-center">
               <button
                 type="button"
@@ -111,7 +129,6 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Brand mark inside card */}
           <div className="pointer-events-none absolute bottom-4 right-4">
             <Image
               src="/logo.png"
@@ -125,7 +142,6 @@ export default function LoginPage() {
         </div>
       </section>
 
-      {/* Footer corners (like your mock) */}
       <div className="pointer-events-none select-none absolute bottom-4 left-6 text-sm text-white/90 tracking-wide">
         EN HR DE
       </div>

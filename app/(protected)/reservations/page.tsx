@@ -129,11 +129,6 @@ function ReservationCard({ res }: { res: Reservation }) {
           {/* Icons + dates */}
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-sm text-black/80">
-              <IconCalendar /> {res.pickname}
-            </div>
-          </div>
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 text-sm text-black/80">
               <IconCalendar />
               <span>
                 {res.pickupDate} - {res.returnDate}

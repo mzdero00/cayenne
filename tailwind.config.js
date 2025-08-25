@@ -26,12 +26,12 @@ module.exports = {
 
         highlight: '#ffd43b',
       },
-      fontFamily: {
-        jomolhari: ['Jomolhari', 'serif'],
-        josefin: ['"Josefin Sans"', 'sans-serif'],
-        sansita: ['"Sansita Swashed"', 'cursive'],
-      },
+    fontFamily: {
+      josefin: ["var(--font-josefin)"],
+      sansita: ["var(--font-sansita)"],
+      jomolhari: ["var(--font-jomolhari)"],
     },
   },
+    },
   plugins: [],
 }

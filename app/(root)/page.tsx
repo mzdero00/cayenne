@@ -1,5 +1,4 @@
 // app/page.tsx
-import Image from "next/image";
 import RentalForm from "../components/RentalForm";
 import LanguageSelector from "../components/LanguageSelector";
 import FeatureSection from "../components/FeatureSection";

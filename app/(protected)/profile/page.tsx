@@ -141,7 +141,10 @@ export default async function ProfilePage() {
   const memberSince = user.created_at
     ? new Date(user.created_at).toLocaleDateString("en-GB")
     : "—";
-  const provider = (user.app_metadata as any)?.provider ?? "password";
+  const provider =
+    typeof user.app_metadata?.provider === "string"
+      ? user.app_metadata.provider
+      : "password";
 
   return (
     <>

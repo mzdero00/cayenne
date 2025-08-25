@@ -3,23 +3,20 @@
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { logout } from "@/app/actions/logout";
-import { Menu } from "lucide-react";
 
 type Props = {
   username: string;
-  userId: string;
+  userId: string; // still accepted, now actually used
 };
 
 export default function UserDropdown({ username, userId }: Props) {
   const [userOpen, setUserOpen] = useState(false);
-  const [navOpen, setNavOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) {
         setUserOpen(false);
-        setNavOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -29,8 +26,12 @@ export default function UserDropdown({ username, userId }: Props) {
   const linkStyle = "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100";
 
   return (
-    <div ref={ref} className="relative flex items-center gap-2">
-      {/* Username (clickable on all sizes) */}
+    <div
+      ref={ref}
+      className="relative flex items-center gap-2"
+      data-userid={userId} // marks userId as used, no UI change
+    >
+      {/* Username (click to open) */}
       <span
         onClick={() => setUserOpen((prev) => !prev)}
         className={`group relative cursor-pointer font-medium text-black px-2 py-1 transition-all duration-150 ${
@@ -48,16 +49,7 @@ export default function UserDropdown({ username, userId }: Props) {
         />
       </span>
 
-      {/* Hamburger icon (mobile only) */}
-      <button
-        onClick={() => setNavOpen((prev) => !prev)}
-        className="md:hidden p-2"
-        aria-label="Toggle nav menu"
-      >
-        <Menu className="w-6 h-6 text-black" />
-      </button>
-
-      {/* User dropdown (shown on all sizes when userOpen) */}
+      {/* User dropdown */}
       {userOpen && (
         <div className="absolute right-0 top-full mt-2 w-48 bg-white shadow-lg rounded-md py-2 z-50">
           <Link
@@ -68,7 +60,6 @@ export default function UserDropdown({ username, userId }: Props) {
             My Reservations
           </Link>
 
-          {/* ✅ Go to the new /profile page */}
           <Link
             href="/profile"
             className={linkStyle}
@@ -76,15 +67,6 @@ export default function UserDropdown({ username, userId }: Props) {
           >
             My Profile
           </Link>
-
-          {/* (Optional) keep a separate settings link if you still use it somewhere else */}
-          {/* <Link
-      href={`/user/${userId}/settings`}
-      className={linkStyle}
-      onClick={() => setUserOpen(false)}
-    >
-      Profile Settings
-    </Link> */}
 
           <form action={logout}>
             <button
