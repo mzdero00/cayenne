@@ -1,4 +1,3 @@
-// components/LanguageSelector.tsx
 export default function LanguageSelector() {
   return (
     <div className="absolute bottom-4 left-4 text-white font-medium space-x-2 text-sm md:text-base">

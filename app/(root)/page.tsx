@@ -3,7 +3,6 @@ import Image from "next/image";
 import RentalForm from "../components/RentalForm";
 import LanguageSelector from "../components/LanguageSelector";
 import FeatureSection from "../components/FeatureSection";
-import NavbarWrapper from "../components/NavbarWrapper";
 import CarCategorySection from "../components/CarCategorySection";
 import PartnerSection from "../components/PartnerSection";
 import Footer from "../components/Footer";
@@ -11,7 +10,6 @@ import Footer from "../components/Footer";
 export default function HomePage() {
   return (
     <>
-      <NavbarWrapper />
       <main
         className="relative h-screen w-full bg-cover bg-center"
         style={{ backgroundImage: "url('/heroimage.jpg')" }}

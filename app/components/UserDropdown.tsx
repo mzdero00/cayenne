@@ -60,12 +60,32 @@ export default function UserDropdown({ username, userId }: Props) {
       {/* User dropdown (shown on all sizes when userOpen) */}
       {userOpen && (
         <div className="absolute right-0 top-full mt-2 w-48 bg-white shadow-lg rounded-md py-2 z-50">
-          <Link href="/reservations" className={linkStyle}>
+          <Link
+            href="/reservations"
+            className={linkStyle}
+            onClick={() => setUserOpen(false)}
+          >
             My Reservations
           </Link>
-          <Link href={`/user/${userId}/settings`} className={linkStyle}>
-            Profile Settings
+
+          {/* ✅ Go to the new /profile page */}
+          <Link
+            href="/profile"
+            className={linkStyle}
+            onClick={() => setUserOpen(false)}
+          >
+            My Profile
           </Link>
+
+          {/* (Optional) keep a separate settings link if you still use it somewhere else */}
+          {/* <Link
+      href={`/user/${userId}/settings`}
+      className={linkStyle}
+      onClick={() => setUserOpen(false)}
+    >
+      Profile Settings
+    </Link> */}
+
           <form action={logout}>
             <button
               type="submit"
@@ -74,21 +94,6 @@ export default function UserDropdown({ username, userId }: Props) {
               Logout
             </button>
           </form>
-        </div>
-      )}
-
-      {/* Nav menu dropdown (only mobile) */}
-      {navOpen && (
-        <div className="absolute right-0 top-full mt-2 w-56 bg-white shadow-lg rounded-md py-2 z-50 block md:hidden">
-          <Link href="/cars" className={linkStyle}>
-            Car Selection
-          </Link>
-          <Link href="/explore" className={linkStyle}>
-            Exploring Dalmatia
-          </Link>
-          <Link href="/about" className={linkStyle}>
-            About Us
-          </Link>
         </div>
       )}
     </div>

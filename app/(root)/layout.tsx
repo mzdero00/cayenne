@@ -1,5 +1,13 @@
-export default function Layout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
-  return <main className="font-work-sans">{children}</main>;
+// app/(root)/layout.tsx
+import Navbar from "../components/Navbar";
+import SplashScreen from "../components/SplashScreen";
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <SplashScreen />
+      <Navbar /> {/* no props → gradient at top */}
+      {children}
+    </>
+  );
 }

@@ -1,100 +1,66 @@
-"use client";
+// app/components/Navbar.tsx (SERVER)
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { auth } from "@/auth";
-import UserDropdown from "../components/UserDropdown";
-import { githubSignIn } from "../actions/signIn";
+import { supabaseServer } from "@/lib/supabase-server";
+import NavbarClient from "./NavbarClient";
+import NavbarFrame from "./NavbarFrame";
 
-export default function NavbarWrapper() {
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 5); // change threshold if needed
-    };
-
-    console.log(window.scrollY);
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  return (
-    <div
-      className={`fixed top-0 left-0 w-full z-50 transition-colors duration-300 ${
-        scrolled
-          ? "bg-primary_orange shadow-md"
-          : "bg-gradient-to-b from-[rgba(0,0,0,0.09)] to-[rgba(0,0,0,0.01)]"
-      }`}
-    >
-      <NavbarContent />
-    </div>
-  );
-}
-
-async function NavbarContent() {
-  const session = await auth();
-
-  return (
-    <nav className="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
-      {/* Logo */}
-      <Link href="/">
-        <Image
-          src="/logo.png"
-          alt="Cayenne Logo"
-          width={160}
-          height={40}
-          priority
-        />
-      </Link>
-
-      {/* Center links */}
-      <div className="hidden md:flex gap-10 text-lg font-medium text-black">
-        <NavLink href="/cars">Car Selection</NavLink>
-        <NavLink href="/explore">Exploring Dalmatia</NavLink>
-        <NavLink href="/about">About Us</NavLink>
-      </div>
-
-      {/* Auth section */}
-      {session?.user ? (
-        <UserDropdown
-          username={session.user.name ?? "User"}
-          userId={session.user.id ?? "UserID"}
-        />
-      ) : (
-        <div className="flex gap-3 items-center">
-          <Link href="/signup">
-            <button className="bg-white text-primary_orange px-4 py-2 rounded-md font-medium hover:opacity-90">
-              Sign Up
-            </button>
-          </Link>
-          <form action={githubSignIn}>
-            <button
-              type="submit"
-              className="bg-primary_green text-white px-4 py-2 rounded-md font-medium hover:opacity-90"
-            >
-              Login
-            </button>
-          </form>
-        </div>
-      )}
-    </nav>
-  );
-}
-
-const NavLink = ({
-  href,
-  children,
-}: {
+type DbItem = {
+  label: string;
   href: string;
-  children: React.ReactNode;
-}) => (
-  <Link
-    href={href}
-    className="transition-all duration-150 hover:scale-[1.05] hover:text-custom_black"
-  >
-    {children}
-  </Link>
-);
+  area: "main" | "user" | "footer";
+  sort_order: number;
+  require_auth: boolean;
+  roles: string[];
+  external: boolean;
+  target_blank: boolean;
+  icon: string | null;
+};
+
+export default async function Navbar({ solid = false }: { solid?: boolean }) {
+  const supabase = await supabaseServer();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const appRoles = (user?.app_metadata?.roles as string[] | undefined) ?? [];
+
+  const { data: rows } = await supabase
+    .from("navigation_items")
+    .select(
+      "label,href,area,sort_order,require_auth,roles,external,target_blank,icon"
+    )
+    .eq("area", "main")
+    .eq("visible", true)
+    .order("sort_order", { ascending: true });
+
+  const items: DbItem[] = ((rows ?? []) as DbItem[]).filter((it) => {
+    if (it.require_auth && !user) return false;
+
+    // roles may be null/undefined or an empty array
+    if (Array.isArray(it.roles) && it.roles.length > 0) {
+      if (!user) return false;
+      const overlap = it.roles.some((role: string) => appRoles.includes(role));
+      if (!overlap) return false;
+    }
+
+    return true;
+  });
+
+  const u = user
+    ? {
+        id: user.id,
+        name:
+          (user.user_metadata?.full_name as string | null) ??
+          user.email?.split("@")[0] ??
+          "User",
+      }
+    : null;
+
+  return (
+    <NavbarFrame solid={solid}>
+      <NavbarClient user={u} items={items} />
+    </NavbarFrame>
+  );
+}
