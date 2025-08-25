@@ -36,7 +36,7 @@ export default function NavbarClient({
         />
       </Link>
 
-      <div className="hidden md:flex gap-10 text-lg font-medium text-black">
+      <div className="hidden md:flex gap-10 text-lg font-normal text-black font-jomolhari">
         {items.map((it) => {
           const isActive = !it.external && pathname === it.href;
           const common =
