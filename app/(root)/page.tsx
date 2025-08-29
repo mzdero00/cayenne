@@ -11,7 +11,7 @@ export default function HomePage() {
     <>
       <main
         className="relative h-screen w-full bg-cover bg-center"
-        style={{ backgroundImage: "url('/heroimage.jpg')" }}
+        style={{ backgroundImage: "url('/heroimage/heroimage.jpg')" }}
       >
         {/* Overlay to darken background slightly */}
         <div className="absolute inset-0 bg-black/10 z-0" />

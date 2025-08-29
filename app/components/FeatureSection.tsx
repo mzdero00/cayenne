@@ -62,7 +62,7 @@ function FeatureCard({
   color?: string;
 }) {
   return (
-    <div className="bg-white/90 backdrop-blur rounded-xl p-6 shadow-md text-center">
+    <div className="bg-[#e8e7e6]/80 backdrop-blur rounded-xl p-6 shadow-md text-center">
       <div className="w-10 h-10 mx-auto mb-4">
         <Image src={icon} alt={title} width={40} height={40} />
       </div>

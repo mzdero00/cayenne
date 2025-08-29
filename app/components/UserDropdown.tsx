@@ -34,8 +34,8 @@ export default function UserDropdown({ username, userId }: Props) {
       {/* Username (click to open) */}
       <span
         onClick={() => setUserOpen((prev) => !prev)}
-        className={`group relative cursor-pointer font-medium text-black px-2 py-1 transition-all duration-150 ${
-          userOpen ? "text-custom_black font-semibold" : ""
+        className={`group relative cursor-pointer font-medium text-black px-2 py-1 transition-all duration-150 font-jomolhari${
+          userOpen ? "text-custom_black font-semibold font-jomolhari" : ""
         }`}
       >
         <span className="relative z-10 group-hover:text-primary_orange transition-colors duration-200">

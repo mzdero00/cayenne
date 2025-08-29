@@ -2,6 +2,7 @@ import Image from "next/image";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ExploreInteractive from "../components/ExploreInteractive";
+import heroExplore from "@/public/heroimage/heroimage_explore.jpg";
 
 export default function ExplorePage() {
   return (
@@ -11,9 +12,10 @@ export default function ExplorePage() {
       {/* Hero Section */}
       <section className="relative h-[70vh] w-full font-jomolhari">
         <Image
-          src="/heroimage_explore.jpg"
+          src={heroExplore}
           alt="Scenic Dalmatian Coast"
           fill
+          sizes="100vw"
           className="object-cover"
           priority
         />

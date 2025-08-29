@@ -3,20 +3,17 @@ import Link from "next/link";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 
-// File: app/reservations/page.tsx
-// Uses car images like /public/cars/renault-clio.png (replace paths to match your assets)
-
 export const metadata = {
   title: "My Reservations | Cayenne",
 };
 
 type Reservation = {
   id: string;
-  className: string; // e.g., "Compact"
-  model: string; // e.g., "Renault Clio"
-  brand?: string; // e.g., "Renault"
+  className: string; // "Compact"
+  model: string; // "Renault Clio"
+  brand?: string; // "Renault"
   image: string; // car image path
-  pickupDate: string; // ISO or formatted
+  pickupDate: string; // dd/mm/yyyy
   returnDate: string;
   pickupTime: string; // "12:00"
   status: "Paid" | "Unpaid" | "Pending";
@@ -29,7 +26,7 @@ const reservations: Reservation[] = [
     className: "Compact",
     model: "Renault Clio",
     brand: "Renault",
-    image: "/cars/Renault-Clio.webp",
+    image: "/cars/renault-clio.PNG", // ✅ exact path/casing
     pickupDate: "21/08/2025",
     returnDate: "27/08/2025",
     pickupTime: "12:00",
@@ -106,62 +103,86 @@ function IconChevronRight() {
   );
 }
 
+function brandLogoPath(brand?: string) {
+  if (!brand) return "";
+  const key = brand.toLowerCase();
+  if (key === "renault") return "/icons/renault_logo.png";
+  return ""; // add more brand logos here if needed
+}
+
 function ReservationCard({ res }: { res: Reservation }) {
+  const href = `/reservations/${res.id}`;
+  const logo = brandLogoPath(res.brand); // <-- use the helper
+
   return (
-    <article className="relative rounded-xl border border-black/10 bg-gray-50 shadow-sm hover:shadow-md transition-shadow">
-      <div className="p-4 sm:p-5">
-        {/* Top Row: class + status */}
-        <div className="flex items-start justify-between">
-          <div className="text-lg font-semibold text-black">
-            {res.className}
-          </div>
-          {res.status === "Paid" ? (
-            <div className="flex items-center gap-2 text-green-700">
-              <IconPaid /> <span className="font-medium">Paid</span>
+    <Link
+      href={href}
+      className="group block"
+      aria-label={`View reservation ${res.id}`}
+    >
+      <article className="rounded-xl border border-black/10 bg-white shadow-sm hover:shadow-md transition-shadow p-4 sm:p-5 cursor-pointer">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 min-h-[160px]">
+          {/* 1) INFO */}
+          <div className="order-2 md:order-1">
+            <div className="text-lg font-semibold text-black mb-2">
+              {res.className}
             </div>
-          ) : (
-            <div className="text-amber-700">{res.status}</div>
-          )}
-        </div>
 
-        {/* Middle Row: details + car image */}
-        <div className="mt-3 grid grid-cols-1 sm:grid-cols-[auto_1fr_auto] items-center gap-4">
-          {/* Icons + dates */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 text-sm text-black/80">
-              <IconCalendar />
-              <span>
-                {res.pickupDate} - {res.returnDate}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-sm text-black/80">
+                <IconCalendar />
+                <span>
+                  {res.pickupDate} - {res.returnDate}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-black/80">
+                <IconClock />
+                {res.pickupTime}
+              </div>
+            </div>
+          </div>
+
+          {/* 2) LOGO + CAR (centered) */}
+          <div className="order-1 md:order-2 flex flex-col items-center justify-center">
+            {logo ? (
+              <Image
+                src={logo}
+                alt={res.brand ?? "Brand"}
+                width={90}
+                height={22}
+                className="mb-2 opacity-80"
+              />
+            ) : null}
+            <div className="relative w-60 h-28 md:w-72 md:h-32">
+              <Image
+                src={res.image}
+                alt={res.model}
+                fill
+                className="object-contain"
+                priority={false}
+              />
+            </div>
+          </div>
+
+          {/* 3) STATUS (top-right) + MORE INFO (bottom-right) */}
+          <div className="order-3 md:order-3 flex flex-col items-end justify-between">
+            {res.status === "Paid" ? (
+              <span className="inline-flex items-center gap-1 text-green-700">
+                <IconPaid />
+                <span className="font-medium">Paid</span>
               </span>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-black/80">
-              <IconClock /> {res.pickupTime}
-            </div>
-          </div>
-          {/* Car image */}
-          <div className="justify-self-center sm:justify-self-end w-44 h-24 relative">
-            <Image
-              src={res.image}
-              alt={res.model}
-              fill
-              className="object-contain"
-              priority={false}
-            />
-          </div>
-        </div>
+            ) : (
+              <span className="text-amber-700">{res.status}</span>
+            )}
 
-        {/* Bottom Row: More info link */}
-        <div className="mt-3 flex items-center justify-end">
-          <Link
-            href={`/reservations/${res.id}`}
-            className="inline-flex items-center gap-2 text-black/80 hover:text-black"
-          >
-            <span>More info</span>
-            <IconChevronRight />
-          </Link>
+            <div className="inline-flex items-center gap-2 text-black/80 group-hover:text-black">
+              <span>More info</span>
+              <IconChevronRight />
+            </div>
+          </div>
         </div>
-      </div>
-    </article>
+      </article>
+    </Link>
   );
 }
 

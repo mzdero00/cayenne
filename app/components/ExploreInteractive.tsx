@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { supabaseBrowser } from "@/lib/supabase-browser";
 
 type City = {
   id: string;
@@ -11,56 +12,15 @@ type City = {
   alt: string;
 };
 
-const CITIES: City[] = [
-  {
-    id: "dubrovnik",
-    name: "Dubrovnik",
-    img: "/places/dubrovnik.jpg",
-    alt: "Old town walls of Dubrovnik over the Adriatic",
-    blurb:
-      "Dubrovnik dazzles with limestone streets, terracotta rooftops, and fortress walls above an electric-blue sea. Stroll the Stradun, ride the cable car to Mount Srđ, and wander hidden coves where history meets modern café culture.",
-  },
-  {
-    id: "imotski",
-    name: "Imotski",
-    img: "/places/imotski.jpg",
-    alt: "Blue Lake in Imotski",
-    blurb:
-      "Imotski’s Blue and Red Lakes carve dramatic circles into karst stone. Swim in summer, climb to Topana Fortress, and pair inland vineyards with a quick dash to Makarska beaches just over the mountains.",
-  },
-  {
-    id: "split",
-    name: "Split",
-    img: "/places/split.jpg",
-    alt: "Split waterfront and Diocletian’s Palace",
-    blurb:
-      "Life flows through Diocletian’s Palace like a living museum. Morning markets, marble peristyles, and a sunset Riva promenade set the mood—plus ferries to islands that redefine the word ‘getaway’.",
-  },
-  {
-    id: "makarska",
-    name: "Makarska",
-    img: "/places/makarska.jpg",
-    alt: "Makarska beach beneath Biokovo mountain",
-    blurb:
-      "Between pine-shaded beaches and the Biokovo massif, Makarska blends beach-day ease with alpine drama. Cruise the Riviera, chase viewpoints, and slow down with a gelato by the harbor.",
-  },
-  {
-    id: "sibenik",
-    name: "Šibenik",
-    img: "/places/sibenik.jpg",
-    alt: "Šibenik cathedral and stone lanes",
-    blurb:
-      "Stone alleys climb to fortresses above a glittering bay. Visit the UNESCO-listed Cathedral of St. James, sip by the marina, and hop to the waterfalls of Krka National Park.",
-  },
-  {
-    id: "zadar",
-    name: "Zadar",
-    img: "/places/zadar.jpg",
-    alt: "Zadar sea organ and waterfront",
-    blurb:
-      "Hear the Sea Organ sing while the Sun Salutation lights dance at dusk. Roman forums, island-speckled horizons, and an atmosphere that’s equal parts inventive and timeless.",
-  },
-];
+// Row shape from Supabase
+type CityRow = {
+  id: string;
+  name: string;
+  blurb: string;
+  image_path: string;
+  alt: string;
+  sort_order?: number | null;
+};
 
 function CurvedArrow() {
   return (
@@ -96,18 +56,21 @@ function CityChip({
   active,
   label,
   onClick,
+  buttonRef,
 }: {
   active: boolean;
   label: string;
   onClick: () => void;
+  buttonRef?: (el: HTMLButtonElement | null) => void;
 }) {
   return (
     <button
+      ref={buttonRef}
       type="button"
       onClick={onClick}
       aria-pressed={active}
       className={[
-        "px-4 py-2 rounded-full border shadow-sm transition-all duration-150",
+        "px-4 py-2 rounded-full border shadow-sm transition-all duration-150 whitespace-nowrap",
         "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-sky-500",
         active
           ? "bg-primary_orange text-white border-primary_orange"
@@ -119,38 +82,127 @@ function CityChip({
   );
 }
 
+/** Mobile horizontal chip rail (no arrows), auto-centers active chip */
+function MobileChipRail({
+  cities,
+  selectedId,
+  onSelect,
+}: {
+  cities: City[];
+  selectedId: string;
+  onSelect: (id: string) => void;
+}) {
+  const btnRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+
+  useEffect(() => {
+    const el = btnRefs.current[selectedId];
+    if (el)
+      el.scrollIntoView({
+        behavior: "smooth",
+        inline: "center",
+        block: "nearest",
+      });
+  }, [selectedId]);
+
+  return (
+    <div className="md:hidden bg-custom_lightgray py-4">
+      <div className="max-w-6xl mx-auto px-4 overflow-x-auto">
+        <div className="flex items-center gap-2 pr-2">
+          {cities.map((c) => (
+            <CityChip
+              key={c.id}
+              active={selectedId === c.id}
+              label={c.name}
+              onClick={() => onSelect(c.id)}
+              buttonRef={(el) => {
+                btnRefs.current[c.id] = el;
+              }}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function ExploreInteractive() {
-  const [selectedId, setSelectedId] = useState<City["id"]>("imotski");
+  const [cities, setCities] = useState<City[]>([]);
+  const [selectedId, setSelectedId] = useState<string>("");
+  const [loading, setLoading] = useState(true);
   const detailsRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    const load = async () => {
+      const supabase = supabaseBrowser();
+      const { data, error } = await supabase
+        .from("cities")
+        .select("id,name,blurb,image_path,alt,sort_order")
+        .order("sort_order", { ascending: true });
+
+      if (error) {
+        console.error("Failed to load cities:", error);
+        setLoading(false);
+        return;
+      }
+
+      const rows = (data ?? []) as CityRow[];
+
+      const mapped: City[] = rows.map((r) => ({
+        id: r.id,
+        name: r.name,
+        blurb: r.blurb,
+        img: r.image_path,
+        alt: r.alt,
+      }));
+
+      setCities(mapped);
+      const defaultId =
+        mapped.find((c) => c.id === "imotski")?.id || mapped[0]?.id || "";
+      setSelectedId(defaultId);
+      setLoading(false);
+    };
+    load();
+  }, []);
+
   const city = useMemo(
-    () => CITIES.find((c) => c.id === selectedId)!,
-    [selectedId]
+    () => cities.find((c) => c.id === selectedId),
+    [cities, selectedId]
   );
 
-  const select = (id: City["id"]) => {
+  const select = (id: string) => {
     setSelectedId(id);
-    // Smoothly scroll to details on smaller screens
-    if (detailsRef.current) {
+    if (detailsRef.current)
       detailsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
   };
 
   return (
     <>
-      {/* Journey Map (modern pills + curved arrows) */}
-      <section className="bg-custom_lightgray py-10 text-center font-jomolhari">
+      {/* Mobile: clean chip rail */}
+      {!loading && (
+        <MobileChipRail
+          cities={cities}
+          selectedId={selectedId}
+          onSelect={select}
+        />
+      )}
+
+      {/* Tablet/Desktop: original pills + curved arrows */}
+      <section className="hidden md:block bg-custom_lightgray py-10 text-center font-jomolhari">
         <div className="max-w-6xl mx-auto px-4 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
-          {CITIES.map((c, i) => (
-            <div key={c.id} className="flex items-center gap-2 sm:gap-3">
-              <CityChip
-                active={selectedId === c.id}
-                label={c.name}
-                onClick={() => select(c.id)}
-              />
-              {i !== CITIES.length - 1 && <CurvedArrow />}
-            </div>
-          ))}
+          {loading && (
+            <div className="text-gray-500 text-sm">Loading places…</div>
+          )}
+          {!loading &&
+            cities.map((c, i) => (
+              <div key={c.id} className="flex items-center gap-2 sm:gap-3">
+                <CityChip
+                  active={selectedId === c.id}
+                  label={c.name}
+                  onClick={() => select(c.id)}
+                />
+                {i !== cities.length - 1 && <CurvedArrow />}
+              </div>
+            ))}
         </div>
       </section>
 
@@ -161,36 +213,45 @@ export default function ExploreInteractive() {
         className="bg-[#f7f7f7] py-16 px-6 font-jomolhari"
       >
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 items-center">
-          <div className="max-w-xl">
-            <h3 className="text-2xl md:text-3xl font-serif mb-4 border-b-2 border-primary_orange inline-block text-custom_black">
-              {city.name}
-            </h3>
-            <p className="text-gray-700 text-sm leading-relaxed">
-              {city.blurb}
-            </p>
-          </div>
+          {city ? (
+            <>
+              <div className="max-w-xl">
+                <h3 className="text-2xl md:text-3xl font-serif mb-4 border-b-2 border-primary_orange inline-block text-custom_black">
+                  {city.name}
+                </h3>
+                <p className="text-gray-700 text-base md:text-lg leading-relaxed">
+                  {city.blurb}
+                </p>
+              </div>
 
-          <div className="relative w-full max-w-2xl lg:ml-auto">
-            <div
-              className="absolute -bottom-4 -right-4 w-full h-full rounded-2xl bg-gray-300"
-              aria-hidden
-            />
-            <div
-              className="absolute -top-4 -left-4 w-full h-full rounded-2xl bg-white shadow"
-              aria-hidden
-            />
-            <div className="relative rounded-2xl overflow-hidden shadow-xl">
-              <Image
-                src={city.img}
-                alt={city.alt}
-                width={1000}
-                height={667}
-                className="w-full h-auto object-cover"
-                style={{ height: "auto" }} // keep aspect when CSS affects width
-                priority
-              />
+              <div className="relative w-full max-w-2xl lg:ml-auto">
+                <div className="relative aspect-[4/3]">
+                  <div
+                    className="absolute -bottom-4 -right-4 w-full h-full rounded-2xl bg-gray-300"
+                    aria-hidden
+                  />
+                  <div
+                    className="absolute -top-4 -left-4 w-full h-full rounded-2xl bg-white shadow"
+                    aria-hidden
+                  />
+                  <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-xl">
+                    <Image
+                      src={city.img}
+                      alt={city.alt}
+                      fill
+                      className="object-cover"
+                      sizes="(min-width:1024px) 40vw, (min-width:640px) 60vw, 100vw"
+                      priority
+                    />
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="col-span-2 text-center text-gray-500">
+              No city selected.
             </div>
-          </div>
+          )}
         </div>
       </section>
     </>

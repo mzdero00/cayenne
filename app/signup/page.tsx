@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { supabaseBrowser } from "@/lib/supabase-browser";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -46,9 +48,23 @@ export default function SignUpPage() {
 
   return (
     <main className="relative min-h-screen bg-[#2b3238] text-white">
-      {/* Heading */}
-      <div className="pt-12 text-center">
-        <h1 className="font-jomolhari text-3xl md:text-4xl">Sign up</h1>
+      {/* Header row aligned to card width (max-w-3xl) */}
+      <div className="pt-10 sm:pt-12">
+        <div className="mx-auto w-full max-w-3xl px-4">
+          <div className="relative flex items-center justify-center">
+            {/* Back button (arrow only on phones) */}
+            <Link
+              href="/"
+              aria-label="Back to home"
+              className="absolute left-0 inline-flex items-center gap-2 rounded-md border border-white/30 bg-white/10 px-3 py-2 text-white backdrop-blur hover:bg-white/15"
+            >
+              <ArrowLeft className="h-5 w-5" />
+              <span className="hidden sm:inline text-sm">Back to home</span>
+            </Link>
+
+            <h1 className="font-jomolhari text-3xl md:text-4xl">Sign up</h1>
+          </div>
+        </div>
       </div>
 
       {/* Card */}

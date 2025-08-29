@@ -1,8 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, FormEvent } from "react";
+import { useRouter } from "next/navigation";
 
-export default function RentalForm() {
+export default function HomeFilterMenu() {
+  const router = useRouter();
+
   const [form, setForm] = useState({
     pickupLocation: "",
     returnLocation: "",
@@ -21,12 +24,38 @@ export default function RentalForm() {
   ];
   const classes = ["Compact", "Comfort", "Comfort+", "Grand Tourer"];
 
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: keyof typeof form, value: string) =>
     setForm((prev) => ({ ...prev, [field]: value }));
+
+  const onSubmit = (e: FormEvent) => {
+    e.preventDefault();
+
+    const params = new URLSearchParams();
+
+    // Always include what user picked (so you can show/search on /cars)
+    if (form.pickupLocation) params.set("pickupLocation", form.pickupLocation);
+    if (form.returnLocation) params.set("returnLocation", form.returnLocation);
+    if (form.pickupTime) params.set("pickupTime", form.pickupTime);
+    if (form.returnTime) params.set("returnTime", form.returnTime);
+    if (form.carClass) params.set("carClass", form.carClass);
+
+    // Map class -> /cars "type" (your backend expects Compact | Comfort | ComfortPlus)
+    const typeMap: Record<string, string> = {
+      Compact: "Compact",
+      Comfort: "Comfort",
+      "Comfort+": "ComfortPlus",
+    };
+    const mappedType = typeMap[form.carClass];
+    if (mappedType) params.set("type", mappedType);
+
+    router.push(`/cars?${params.toString()}#results`);
   };
 
   return (
-    <form className="bg-white/30 backdrop-blur-md p-6 md:p-10 rounded-3xl shadow-lg w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-4 text-black">
+    <form
+      onSubmit={onSubmit}
+      className="bg-white/30 backdrop-blur-md p-6 md:p-10 rounded-3xl shadow-lg w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-4 text-black"
+    >
       {/* Pickup Location */}
       <select
         value={form.pickupLocation}
@@ -79,19 +108,21 @@ export default function RentalForm() {
       >
         <option value="">Class (any)</option>
         {classes.map((cls) => (
-          <option key={cls} value={cls.toLowerCase()}>
+          <option key={cls} value={cls}>
             {cls}
           </option>
         ))}
       </select>
 
       {/* Search Button */}
-      <button
-        type="submit"
-        className="bg-primary_orange text-white font-medium px-6 py-3 rounded-md mt-2 md:mt-0 md:col-span-2 hover:opacity-90"
-      >
-        Search
-      </button>
+      <div className="md:col-span-2 flex justify-center">
+        <button
+          type="submit"
+          className="bg-primary_orange text-white font-medium px-6 py-3 rounded-md hover:opacity-90"
+        >
+          Search
+        </button>
+      </div>
     </form>
   );
 }

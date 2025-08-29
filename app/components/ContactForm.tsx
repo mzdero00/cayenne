@@ -93,7 +93,7 @@ export default function ContactForm() {
         </div>
       )}
 
-      <div className="md:col-span-2 flex justify-end">
+      <div className="md:col-span-2 flex justify-end mt-2">
         <button
           type="submit"
           disabled={status === "sending" || status === "sent"}
