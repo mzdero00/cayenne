@@ -185,7 +185,7 @@ export default async function CarsPage({
 
                     <div className="mt-4 flex items-center justify-between">
                       <span className="text-gray-900 font-medium">
-                        {car.price}€ per day
+                        {car.price}€ per day!
                       </span>
                       <span className="text-sky-700 group-hover:text-sky-800 text-sm underline">
                         See details &gt;
