@@ -15,6 +15,7 @@ type FormState = {
 const cities = ["Split", "Imotski", "Makarska", "Zadar", "Dubrovnik", "Zagreb"];
 const classes: FormState["carClass"][] = ["Compact", "Comfort", "Comfort+"];
 
+// UI class -> backend type for /cars
 type BackendType = "Compact" | "Comfort" | "ComfortPlus";
 const classToType: Record<FormState["carClass"] | "", BackendType | undefined> =
   {
@@ -23,6 +24,8 @@ const classToType: Record<FormState["carClass"] | "", BackendType | undefined> =
     Comfort: "Comfort",
     "Comfort+": "ComfortPlus",
   };
+
+// backend type -> UI class (for hydration)
 const typeToClass: Record<BackendType | "", FormState["carClass"] | ""> = {
   "": "",
   Compact: "Compact",
@@ -30,10 +33,12 @@ const typeToClass: Record<BackendType | "", FormState["carClass"] | ""> = {
   ComfortPlus: "Comfort+",
 };
 
-// Shared control style: same height for inputs/selects across devices
+// Unified control styles (same size for all fields, and shrink properly on mobile)
 const control =
-  "h-12 w-full rounded-md border border-black/10 bg-white/90 px-3 text-black text-base";
+  "h-12 w-full block min-w-0 rounded-md border border-black/10 bg-white/90 px-3 text-black text-base tracking-normal tabular-nums";
 
+/** Local component (not exported) to avoid Next serializable-props warning.
+ *  Shows a pseudo-placeholder ONLY on mobile (md:hidden) when empty+blurred. */
 function DateTimeField({
   value,
   setValue,
@@ -42,13 +47,13 @@ function DateTimeField({
 }: {
   value: string;
   setValue: (v: string) => void;
-  placeholder: string;
+  placeholder: string; // e.g. "Pickup • dd/mm/yy hh:mm"
   ariaLabel: string;
 }) {
   const [focused, setFocused] = React.useState(false);
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <input
         type="datetime-local"
         value={value}
@@ -56,13 +61,21 @@ function DateTimeField({
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         aria-label={ariaLabel}
-        className={`${control} [color-scheme:light] [&::-webkit-datetime-edit]:text-black [&::-webkit-calendar-picker-indicator]:opacity-80`}
+        className={`
+          ${control}
+          [color-scheme:light]
+          [&::-webkit-datetime-edit]:text-black
+          [&::-webkit-calendar-picker-indicator]:opacity-80
+        `}
       />
-      {/* Pseudo placeholder ONLY on mobile to avoid overlap on desktop */}
+      {/* Pseudo placeholder: mobile only (md:hidden) to prevent desktop overlap */}
       {!value && !focused && (
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm select-none md:hidden"
+          className="
+            pointer-events-none absolute left-3 top-1/2 -translate-y-1/2
+            text-gray-500 text-sm select-none md:hidden
+          "
         >
           {placeholder}
         </span>
@@ -83,6 +96,7 @@ export default function FilterMenu() {
     carClass: "",
   });
 
+  // Hydrate from URL
   React.useEffect(() => {
     const backendType = (search.get("type") ?? "") as BackendType | "";
     setForm((prev) => ({
@@ -116,11 +130,11 @@ export default function FilterMenu() {
     if (mapped) params.set("type", mapped);
 
     router.replace(`/cars?${params.toString()}`, { scroll: false });
-    requestAnimationFrame(() =>
+    requestAnimationFrame(() => {
       document
         .getElementById("results")
-        ?.scrollIntoView({ behavior: "smooth", block: "start" })
-    );
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
   };
 
   return (
@@ -156,7 +170,7 @@ export default function FilterMenu() {
         ))}
       </select>
 
-      {/* Pickup Time */}
+      {/* Pickup Time (mobile placeholder only) */}
       <DateTimeField
         value={form.pickupTime}
         setValue={(v) => setForm((p) => ({ ...p, pickupTime: v }))}
