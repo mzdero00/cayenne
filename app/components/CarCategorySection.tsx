@@ -216,8 +216,8 @@ export default function CarCategorySection({ viewAllHref = "/cars" }: Props) {
           </Link>
 
           {/* Footer note */}
-          <p className="font-sansita text-custom_black italic text-xl mt-6">
-            Collaborations to Date
+          <p className="font-sansita text-custom_black italic text-3xl mt-12">
+            Collaborations
           </p>
         </div>
       </div>
