@@ -7,15 +7,15 @@ import { useRouter, useSearchParams } from "next/navigation";
 type FormState = {
   pickupLocation: string;
   returnLocation: string;
-  pickupTime: string; // ISO "YYYY-MM-DDTHH:mm"
-  returnTime: string; // ISO "YYYY-MM-DDTHH:mm"
+  pickupTime: string; // "YYYY-MM-DDTHH:mm"
+  returnTime: string; // "YYYY-MM-DDTHH:mm"
   carClass: "Compact" | "Comfort" | "Comfort+" | "";
 };
 
 const cities = ["Split", "Imotski", "Makarska", "Zadar", "Dubrovnik", "Zagreb"];
 const classes: FormState["carClass"][] = ["Compact", "Comfort", "Comfort+"];
 
-// UI class -> backend `type` for /cars
+// UI class -> backend type for /cars
 type BackendType = "Compact" | "Comfort" | "ComfortPlus";
 const classToType: Record<FormState["carClass"] | "", BackendType | undefined> =
   {
@@ -24,14 +24,60 @@ const classToType: Record<FormState["carClass"] | "", BackendType | undefined> =
     Comfort: "Comfort",
     "Comfort+": "ComfortPlus",
   };
-
-// backend `type` -> UI class (for hydration)
+// backend type -> UI class (for hydration)
 const typeToClass: Record<BackendType | "", FormState["carClass"] | ""> = {
   "": "",
   Compact: "Compact",
   Comfort: "Comfort",
   ComfortPlus: "Comfort+",
 };
+
+/** Local (non-exported) component to avoid Next's serializable-props error.
+ *  Shows a pseudo-placeholder on mobile when empty. */
+function DateTimeField({
+  value,
+  setValue,
+  placeholder,
+  ariaLabel,
+}: {
+  value: string;
+  setValue: (v: string) => void;
+  placeholder: string; // e.g. "Pickup • dd/mm/yy hh:mm"
+  ariaLabel: string;
+}) {
+  const [focused, setFocused] = React.useState(false);
+
+  return (
+    <div className="relative">
+      <input
+        type="datetime-local"
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        aria-label={ariaLabel}
+        className="
+          p-3 rounded-md bg-white/90 border border-black/10 w-full
+          text-black [color-scheme:light]
+          [&::-webkit-datetime-edit]:text-black
+          [&::-webkit-calendar-picker-indicator]:opacity-80
+        "
+      />
+      {/* Pseudo placeholder: only when empty & not focused */}
+      {!value && !focused && (
+        <span
+          aria-hidden="true"
+          className="
+            pointer-events-none absolute left-3 top-1/2 -translate-y-1/2
+            text-gray-500 text-sm select-none
+          "
+        >
+          {placeholder}
+        </span>
+      )}
+    </div>
+  );
+}
 
 export default function FilterMenu() {
   const router = useRouter();
@@ -48,7 +94,8 @@ export default function FilterMenu() {
   // Hydrate from URL
   React.useEffect(() => {
     const backendType = (search.get("type") ?? "") as BackendType | "";
-    const next: Partial<FormState> = {
+    setForm((prev) => ({
+      ...prev,
       pickupLocation: search.get("pickupLocation") ?? "",
       returnLocation: search.get("returnLocation") ?? "",
       pickupTime: search.get("pickupTime") ?? "",
@@ -57,17 +104,11 @@ export default function FilterMenu() {
         (search.get("carClass") as FormState["carClass"]) ??
         typeToClass[backendType] ??
         "",
-    };
-    setForm((prev) => ({ ...prev, ...next }));
+    }));
   }, [search]);
 
-  // Typed change handlers
   const onChangeSelect =
     (field: keyof FormState) => (e: React.ChangeEvent<HTMLSelectElement>) =>
-      setForm((p) => ({ ...p, [field]: e.target.value }));
-
-  const onChangeDateTime =
-    (field: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement>) =>
       setForm((p) => ({ ...p, [field]: e.target.value }));
 
   const onSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
@@ -83,9 +124,7 @@ export default function FilterMenu() {
     const mapped = classToType[form.carClass];
     if (mapped) params.set("type", mapped);
 
-    // ✅ fixed: use backticks so the template literal works
     router.replace(`/cars?${params.toString()}`, { scroll: false });
-
     requestAnimationFrame(() => {
       document
         .getElementById("results")
@@ -126,20 +165,20 @@ export default function FilterMenu() {
         ))}
       </select>
 
-      {/* Pickup Time */}
-      <input
-        type="datetime-local"
+      {/* Pickup Time (shows hint on mobile when empty) */}
+      <DateTimeField
         value={form.pickupTime}
-        onChange={onChangeDateTime("pickupTime")}
-        className="p-3 rounded-md bg-white/90 border border-black/10 text-black [color-scheme:light] [&::-webkit-datetime-edit]:text-black [&::-webkit-calendar-picker-indicator]:opacity-80"
+        setValue={(v) => setForm((p) => ({ ...p, pickupTime: v }))}
+        placeholder="Pickup • dd/mm/yy hh:mm"
+        ariaLabel="Pickup date and time"
       />
 
       {/* Return Time */}
-      <input
-        type="datetime-local"
+      <DateTimeField
         value={form.returnTime}
-        onChange={onChangeDateTime("returnTime")}
-        className="p-3 rounded-md bg-white/90 border border-black/10 text-black [color-scheme:light] [&::-webkit-datetime-edit]:text-black [&::-webkit-calendar-picker-indicator]:opacity-80"
+        setValue={(v) => setForm((p) => ({ ...p, returnTime: v }))}
+        placeholder="Return • dd/mm/yy hh:mm"
+        ariaLabel="Return date and time"
       />
 
       {/* Car Class (full width) */}
@@ -156,7 +195,7 @@ export default function FilterMenu() {
         ))}
       </select>
 
-      {/* Search Button centered */}
+      {/* Search Button */}
       <div className="md:col-span-2 flex justify-center">
         <button
           type="submit"
