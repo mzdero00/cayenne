@@ -22,7 +22,7 @@ const CARS: Car[] = [
   {
     id: "clio",
     name: "Renault Clio",
-    src: "/cars/clio_side.png",
+    src: "/car/clio_side.png",
     category: "Compact",
     width: 200,
     height: 100,
@@ -30,7 +30,7 @@ const CARS: Car[] = [
   {
     id: "megane",
     name: "Renault Megane",
-    src: "/cars/megane_side.png",
+    src: "/car/megane_side.png",
     category: "Comfort",
     width: 240,
     height: 100,
@@ -38,7 +38,7 @@ const CARS: Car[] = [
   {
     id: "passat",
     name: "VW Passat",
-    src: "/cars/passat_side.png",
+    src: "/car/passat_side.png",
     category: "Comfort+",
     width: 220,
     height: 100,

@@ -99,7 +99,7 @@ export default function NavbarClient({
             <div className="flex gap-3 items-center">
               <Link
                 href="/signup"
-                className="bg-white text-primary_orange px-4 py-2 rounded-md font-medium hover:opacity-90"
+                className="bg-primary_orange px-4 py-2 rounded-md font-medium hover:opacity-90"
               >
                 Sign Up
               </Link>
