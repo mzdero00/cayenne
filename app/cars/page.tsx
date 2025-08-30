@@ -118,7 +118,7 @@ export default async function CarsPage({
       <Navbar />
 
       {/* HERO with glass search */}
-      <section className="relative h-[70vh] w-full font-jomolhari">
+      <section className="relative min-h-[560px] md:min-h-[60vh] lg:min-h-[70vh] w-full font-jomolhari">
         <Image
           src="/heroimage/heroimage_cars.png"
           alt="Car by the sea"
@@ -129,8 +129,17 @@ export default async function CarsPage({
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/10 to-transparent" />
 
         {/* Glass search panel */}
-        <div className="absolute inset-0 flex items-start justify-center pt-32 md:pt-40 lg:pt-48 px-4">
-          <div className="w-full max-w-3xl md:max-w-4xl rounded-2xl border border-white/40 bg-white/60 backdrop-blur-md shadow-xl p-4 md:p-6">
+        <div className="absolute inset-0 flex items-start justify-center pt-24 md:pt-32 lg:pt-40 px-4">
+          <div
+            className="
+        w-full max-w-3xl md:max-w-4xl
+        rounded-2xl border border-white/40 bg-white/65 backdrop-blur-md shadow-xl
+        p-4 md:p-6
+
+        /* keep the whole card inside the hero on small screens */
+        max-h-[calc(100vh-8rem)] overflow-y-auto
+      "
+          >
             <FilterMenu />
           </div>
         </div>

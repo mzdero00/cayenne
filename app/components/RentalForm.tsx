@@ -22,7 +22,7 @@ export default function HomeFilterMenu() {
     "Dubrovnik",
     "Zagreb",
   ];
-  const classes = ["Compact", "Comfort", "Comfort+", "Grand Tourer"];
+  const classes = ["Compact", "Comfort", "Comfort+"];
 
   const handleChange = (field: keyof typeof form, value: string) =>
     setForm((prev) => ({ ...prev, [field]: value }));

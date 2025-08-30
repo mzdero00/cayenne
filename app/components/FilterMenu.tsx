@@ -9,16 +9,11 @@ type FormState = {
   returnLocation: string;
   pickupTime: string; // ISO "YYYY-MM-DDTHH:mm"
   returnTime: string; // ISO "YYYY-MM-DDTHH:mm"
-  carClass: "Compact" | "Comfort" | "Comfort+" | "Grand Tourer" | "";
+  carClass: "Compact" | "Comfort" | "Comfort+" | "";
 };
 
 const cities = ["Split", "Imotski", "Makarska", "Zadar", "Dubrovnik", "Zagreb"];
-const classes: FormState["carClass"][] = [
-  "Compact",
-  "Comfort",
-  "Comfort+",
-  "Grand Tourer",
-];
+const classes: FormState["carClass"][] = ["Compact", "Comfort", "Comfort+"];
 
 // UI class -> backend `type` for /cars
 type BackendType = "Compact" | "Comfort" | "ComfortPlus";
@@ -28,7 +23,6 @@ const classToType: Record<FormState["carClass"] | "", BackendType | undefined> =
     Compact: "Compact",
     Comfort: "Comfort",
     "Comfort+": "ComfortPlus",
-    "Grand Tourer": undefined,
   };
 
 // backend `type` -> UI class (for hydration)
@@ -135,15 +129,24 @@ export default function FilterMenu() {
         type="datetime-local"
         value={form.pickupTime}
         onChange={onChangeDateTime("pickupTime")}
-        className="p-3 rounded-md bg-white/90 border border-black/10"
+        className="
+    p-3 rounded-md bg-white/90 border border-black/10
+    text-black [color-scheme:light]
+    [&::-webkit-datetime-edit]:text-black
+    [&::-webkit-calendar-picker-indicator]:opacity-80
+  "
       />
 
-      {/* Return Time */}
       <input
         type="datetime-local"
         value={form.returnTime}
         onChange={onChangeDateTime("returnTime")}
-        className="p-3 rounded-md bg-white/90 border border-black/10"
+        className="
+    p-3 rounded-md bg-white/90 border border-black/10
+    text-black [color-scheme:light]
+    [&::-webkit-datetime-edit]:text-black
+    [&::-webkit-calendar-picker-indicator]:opacity-80
+  "
       />
 
       {/* Car Class (full width) */}
