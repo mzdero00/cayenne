@@ -1,4 +1,5 @@
 // app/cars/page.tsx
+import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Navbar from "../components/Navbar";
@@ -124,29 +125,33 @@ export default async function CarsPage({
           priority
         />
 
-        {/* soft overlay */}
+        {/* subtle overlay */}
         <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/10 via-black/5 to-transparent" />
 
-        {/* Reserve navbar height, then center the card in the remaining space */}
+        {/* Reserve navbar height, then center in remaining space */}
         <div className="absolute inset-0 px-4">
           <div
             className="
-        pt-20 md:pt-24
-        h-[calc(100%-theme(spacing.20))] md:h-[calc(100%-theme(spacing.24))]
-        grid place-items-center
-      "
+              pt-20 md:pt-24                  /* reserved nav height */
+              h-[calc(100%-theme(spacing.20))] md:h-[calc(100%-theme(spacing.24))]
+              grid place-items-center
+            "
           >
             <div className="w-full max-w-xl sm:max-w-2xl">
               <div
                 className="
-            max-h-[min(60svh,36rem)]
-            overflow-y-auto overscroll-contain
-            [-webkit-overflow-scrolling:touch] [scrollbar-gutter:stable]
-            rounded-2xl border border-white/20 bg-white/30 backdrop-blur-md shadow-xl
-            p-5 sm:p-6
-          "
+                  max-h-[min(55svh,32rem)]     /* cap height so it never looks too tall */
+                  overflow-y-auto overscroll-contain
+                  [-webkit-overflow-scrolling:touch] [scrollbar-gutter:stable]
+                  rounded-2xl border border-white/25
+                  bg-white/40 backdrop-blur-md shadow-xl
+                  p-5 sm:p-6
+                "
               >
-                <FilterMenu />
+                {/* FilterMenu uses useSearchParams -> wrap in Suspense */}
+                <Suspense fallback={null}>
+                  <FilterMenu />
+                </Suspense>
               </div>
             </div>
           </div>
