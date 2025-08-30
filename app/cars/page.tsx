@@ -111,11 +111,10 @@ export default async function CarsPage({
 
   return (
     <>
-      {/* Make navbar white/glassy from the start so the hero overlay doesn’t show through */}
       <Navbar />
 
-      {/* HERO with glass search */}
-      <section className="relative h-[70vh] w-full font-jomolhari">
+      {/* HERO with centered, bounded filter that never overlaps the navbar */}
+      <section className="relative h-[70svh] w-full font-jomolhari">
         <Image
           src="/heroimage/heroimage_cars.png"
           alt="Car by the sea"
@@ -125,13 +124,31 @@ export default async function CarsPage({
           priority
         />
 
-        {/* Soft overlay; never intercepts clicks */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/5 to-transparent pointer-events-none" />
+        {/* soft overlay */}
+        <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/10 via-black/5 to-transparent" />
 
-        {/* Glass search panel — padded so it never overlaps the fixed navbar */}
-        <div className="absolute inset-x-0 top-0 flex items-start justify-center px-4 pt-24 md:pt-28 lg:pt-32 pb-6">
-          <div className="w-full max-w-3xl md:max-w-4xl rounded-2xl border border-white/40 bg-white/60 backdrop-blur-md shadow-xl p-4 md:p-6">
-            <FilterMenu />
+        {/* Reserve navbar height, then center the card in the remaining space */}
+        <div className="absolute inset-0 px-4">
+          <div
+            className="
+        pt-20 md:pt-24
+        h-[calc(100%-theme(spacing.20))] md:h-[calc(100%-theme(spacing.24))]
+        grid place-items-center
+      "
+          >
+            <div className="w-full max-w-xl sm:max-w-2xl">
+              <div
+                className="
+            max-h-[min(60svh,36rem)]
+            overflow-y-auto overscroll-contain
+            [-webkit-overflow-scrolling:touch] [scrollbar-gutter:stable]
+            rounded-2xl border border-white/20 bg-white/30 backdrop-blur-md shadow-xl
+            p-5 sm:p-6
+          "
+              >
+                <FilterMenu />
+              </div>
+            </div>
           </div>
         </div>
       </section>

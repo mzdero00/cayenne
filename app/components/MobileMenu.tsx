@@ -1,3 +1,4 @@
+// app/components/MobileMenu.tsx
 "use client";
 
 import Link from "next/link";
@@ -12,6 +13,7 @@ import {
 import { logout } from "@/app/actions/logout";
 
 type User = { id?: string; name?: string | null } | null;
+
 export type NavItem = {
   label: string;
   href: string;
@@ -36,14 +38,14 @@ export default function MobileMenu({
 
   return (
     <>
-      {/* Opaque scrim */}
+      {/* Scrim */}
       <div
         className="fixed inset-0 z-[100] bg-black/50"
         onClick={onClose}
-        aria-hidden
+        aria-hidden="true"
       />
 
-      {/* Drawer: solid bg, its own stacking context, scrollable */}
+      {/* Drawer */}
       <div
         className="
           fixed top-0 right-0 z-[110]
@@ -55,6 +57,7 @@ export default function MobileMenu({
         role="dialog"
         aria-modal="true"
       >
+        {/* Header */}
         <div className="flex items-center justify-between px-4 h-16 border-b border-black/10">
           <span className="font-jomolhari text-lg text-custom_black">Menu</span>
           <button
@@ -66,6 +69,7 @@ export default function MobileMenu({
           </button>
         </div>
 
+        {/* Nav items */}
         <div className="px-4 py-4 space-y-2">
           {items.map((it) => {
             const active = !it.external && pathname === it.href;
@@ -74,6 +78,7 @@ export default function MobileMenu({
                 ? "bg-primary_orange/5 border-primary_orange/60"
                 : "bg-white border-black/10 hover:border-primary_orange/50"
             }`;
+
             const content = (
               <>
                 <span className="text-custom_black">{it.label}</span>
@@ -106,6 +111,7 @@ export default function MobileMenu({
 
           {user ? (
             <>
+              {/* Signed-in summary */}
               <div className="flex items-center gap-3 px-3 py-2 rounded-xl bg-white border border-black/10">
                 <User2 className="w-5 h-5 text-black/60" />
                 <div className="text-sm text-gray-700">
@@ -134,8 +140,12 @@ export default function MobileMenu({
                 <Settings className="w-5 h-5 text-black/50" />
               </Link>
 
-              <form action={logout} method="post" className="pt-1">
-                <button className="w-full flex items-center justify-between px-3 py-3 rounded-xl border bg-red-50 border-red-200 text-red-700 hover:bg-red-100 hover:border-red-300">
+              {/* Logout — use formAction so React doesn’t warn */}
+              <form className="pt-1">
+                <button
+                  formAction={logout}
+                  className="w-full flex items-center justify-between px-3 py-3 rounded-xl border bg-red-50 border-red-200 text-red-700 hover:bg-red-100 hover:border-red-300"
+                >
                   <span>Log out</span>
                   <LogOut className="w-5 h-5 text-red-600" />
                 </button>

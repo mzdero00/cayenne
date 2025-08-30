@@ -1,3 +1,4 @@
+// app/components/FilterMenu.tsx
 "use client";
 
 import * as React from "react";
@@ -29,22 +30,18 @@ const typeToClass: Record<BackendType | "", FormState["carClass"] | ""> = {
   ComfortPlus: "Comfort+",
 };
 
-// unified control styling
+// ⬇️ slightly shorter input height
 const control =
-  "h-12 w-full min-w-0 rounded-md border border-black/10 bg-white/90 px-3 text-black text-base";
+  "h-11 w-full min-w-0 rounded-md border border-black/10 bg-white/90 px-3 text-black text-base";
 
-/** format a Date to local 'YYYY-MM-DDTHH:mm' */
+/** format Date -> 'YYYY-MM-DDTHH:mm' (local) */
 function toLocalInputValue(d: Date) {
   const pad = (n: number) => String(n).padStart(2, "0");
-  const y = d.getFullYear();
-  const m = pad(d.getMonth() + 1);
-  const day = pad(d.getDate());
-  const h = pad(d.getHours());
-  const min = pad(d.getMinutes());
-  return `${y}-${m}-${day}T${h}:${min}`;
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(
+    d.getHours()
+  )}:${pad(d.getMinutes())}`;
 }
 
-/** string compare works for these ISO-local values */
 const isBefore = (a?: string, b?: string) => !!a && !!b && a < b;
 const isAfter = (a?: string, b?: string) => !!a && !!b && a > b;
 
@@ -60,14 +57,12 @@ export default function FilterMenu() {
     carClass: "",
   });
 
-  // now (local) for min attributes
   const nowLocal = React.useMemo(() => {
     const d = new Date();
     d.setSeconds(0, 0);
     return toLocalInputValue(d);
   }, []);
 
-  // hydrate from URL
   React.useEffect(() => {
     const backendType = (search.get("type") ?? "") as BackendType | "";
     setForm((prev) => ({
@@ -83,27 +78,21 @@ export default function FilterMenu() {
     }));
   }, [search]);
 
-  // Enforce forward-only range when either side changes
   const onChangePickup = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = e.target.value;
-    setForm((p) => {
-      let nextReturn = p.returnTime;
-      if (isBefore(nextReturn, v)) {
-        nextReturn = v; // clamp return to pickup
-      }
-      return { ...p, pickupTime: v, returnTime: nextReturn };
-    });
+    setForm((p) => ({
+      ...p,
+      pickupTime: v,
+      returnTime: isBefore(p.returnTime, v) ? v : p.returnTime,
+    }));
   };
-
   const onChangeReturn = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = e.target.value;
-    setForm((p) => {
-      let nextPickup = p.pickupTime;
-      if (isAfter(nextPickup, v)) {
-        nextPickup = v; // clamp pickup to return
-      }
-      return { ...p, returnTime: v, pickupTime: nextPickup };
-    });
+    setForm((p) => ({
+      ...p,
+      returnTime: v,
+      pickupTime: isAfter(p.pickupTime, v) ? v : p.pickupTime,
+    }));
   };
 
   const onChangeSelect =
@@ -113,7 +102,6 @@ export default function FilterMenu() {
   const onSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     const params = new URLSearchParams();
-
     if (form.pickupLocation) params.set("pickupLocation", form.pickupLocation);
     if (form.returnLocation) params.set("returnLocation", form.returnLocation);
     if (form.pickupTime) params.set("pickupTime", form.pickupTime);
@@ -131,7 +119,6 @@ export default function FilterMenu() {
     );
   };
 
-  // dynamic constraints
   const pickupMin = nowLocal;
   const pickupMax = form.returnTime || undefined;
   const returnMin =
@@ -140,11 +127,11 @@ export default function FilterMenu() {
   return (
     <form
       onSubmit={onSubmit}
-      className="grid grid-cols-1 md:grid-cols-2 gap-4 text-black"
+      className="grid grid-cols-1 md:grid-cols-2 gap-3 text-black"
     >
       {/* Pickup Location */}
       <label className="block">
-        <span className="block text-sm text-black/80 mb-1">
+        <span className="block text-sm text-black/80 mb-0.5">
           Pickup location
         </span>
         <select
@@ -163,7 +150,7 @@ export default function FilterMenu() {
 
       {/* Return Location */}
       <label className="block">
-        <span className="block text-sm text-black/80 mb-1">
+        <span className="block text-sm text-black/80 mb-0.5">
           Return location
         </span>
         <select
@@ -182,7 +169,7 @@ export default function FilterMenu() {
 
       {/* Pickup Time */}
       <label className="block">
-        <span className="block text-sm text-black/80 mb-1">
+        <span className="block text-sm text-black/80 mb-0.5">
           Pickup date & time
         </span>
         <input
@@ -198,7 +185,7 @@ export default function FilterMenu() {
 
       {/* Return Time */}
       <label className="block">
-        <span className="block text-sm text-black/80 mb-1">
+        <span className="block text-sm text-black/80 mb-0.5">
           Return date & time
         </span>
         <input
@@ -213,7 +200,7 @@ export default function FilterMenu() {
 
       {/* Car Class */}
       <label className="block md:col-span-2">
-        <span className="block text-sm text-black/80 mb-1">Class</span>
+        <span className="block text-sm text-black/80 mb-0.5">Class</span>
         <select
           value={form.carClass}
           onChange={onChangeSelect("carClass")}
@@ -232,7 +219,7 @@ export default function FilterMenu() {
       <div className="md:col-span-2 flex justify-center">
         <button
           type="submit"
-          className="h-12 px-8 rounded-md bg-primary_orange text-white font-medium hover:opacity-90"
+          className="h-11 px-7 rounded-md bg-primary_orange text-white font-medium hover:opacity-90"
         >
           Search
         </button>

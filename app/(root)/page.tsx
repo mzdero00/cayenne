@@ -1,5 +1,5 @@
 // app/page.tsx
-import RentalForm from "../components/RentalForm";
+import FilterMenu from "../components/FilterMenu";
 import LanguageSelector from "../components/LanguageSelector";
 import FeatureSection from "../components/FeatureSection";
 import CarCategorySection from "../components/CarCategorySection";
@@ -10,18 +10,36 @@ export default function HomePage() {
   return (
     <>
       <main
-        className="relative h-screen w-full bg-cover bg-center"
+        className="relative min-h-[100svh] w-full bg-cover bg-center"
         style={{ backgroundImage: "url('/heroimage/heroimage.jpg')" }}
       >
-        {/* Overlay to darken background slightly */}
+        {/* Soft overlay */}
         <div className="absolute inset-0 bg-black/10 z-0" />
 
-        {/* Content */}
-        <div className="relative z-10 flex flex-col h-full items-center justify-center px-4">
-          <RentalForm />
+        {/* Language selector pinned to hero; hide on phones */}
+        <div className="absolute left-3 bottom-3 md:left-6 md:bottom-6 z-10 hidden md:block">
           <LanguageSelector />
         </div>
+
+        {/* Centered glass card — matching look & mobile-safe height */}
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full px-3 z-10">
+          <div
+            className="
+      mx-auto w-full max-w-3xl md:max-w-4xl
+      rounded-2xl ring-1 ring-white/60 shadow-xl
+      bg-gradient-to-b from-white/40 via-white/35 to-white/30
+      backdrop-blur-md
+      p-5 sm:p-7 lg:p-9
+      max-h-[60vh] sm:max-h-[65vh]
+      overflow-y-auto overscroll-contain
+      [-webkit-overflow-scrolling:touch] [scrollbar-gutter:stable]
+    "
+          >
+            <FilterMenu />
+          </div>
+        </div>
       </main>
+
       <FeatureSection />
       <CarCategorySection />
       <PartnerSection />
