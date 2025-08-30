@@ -45,7 +45,6 @@ function IconPax() {
 
 type ParamsRecord = Record<string, string | string[] | undefined>;
 
-// Row type for Supabase result
 type DbCar = {
   id: string;
   name: string;
@@ -72,7 +71,6 @@ async function fetchCars(searchParams: ParamsRecord) {
 
   const supabase = await supabaseServer();
 
-  // ⬇️ no generic here
   let q = supabase.from("cars").select("*");
 
   if (type === "Compact" || type === "Comfort" || type === "ComfortPlus") {
@@ -87,7 +85,6 @@ async function fetchCars(searchParams: ParamsRecord) {
 
   if (error) throw error;
 
-  // ⬇️ Cast the payload to your row type
   const rows = (data ?? []) as DbCar[];
 
   return rows.map((c) => ({
@@ -104,46 +101,46 @@ async function fetchCars(searchParams: ParamsRecord) {
 }
 
 export default async function CarsPage({
-  // ⬇️ Next.js passes this as an async value now
   searchParams,
 }: {
+  // Next.js 15 passes this as a Promise
   searchParams: Promise<ParamsRecord>;
 }) {
-  // ⬇️ await before using
   const params = await searchParams;
   const cars = await fetchCars(params);
 
   return (
     <>
+      {/* Make navbar white/glassy from the start so the hero overlay doesn’t show through */}
       <Navbar />
 
       {/* HERO with glass search */}
-      <section className="relative min-h-[70vh] w-full font-jomolhari">
+      <section className="relative h-[70vh] w-full font-jomolhari">
         <Image
           src="/heroimage/heroimage_cars.png"
           alt="Car by the sea"
           fill
+          sizes="100vw"
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/10 to-transparent" />
 
-        {/* On mobile this is in normal flow (relative/z-10).
-      On md+ it becomes absolute overlayed on the hero. */}
-        <div
-          className="
-        relative z-10 flex justify-center px-4 pt-6 pb-8
-        md:absolute md:inset-0 md:items-start md:pt-32 lg:pt-48
-      "
-        >
+        {/* Soft overlay; never intercepts clicks */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/5 to-transparent pointer-events-none" />
+
+        {/* Glass search panel — padded so it never overlaps the fixed navbar */}
+        <div className="absolute inset-x-0 top-0 flex items-start justify-center px-4 pt-24 md:pt-28 lg:pt-32 pb-6">
           <div className="w-full max-w-3xl md:max-w-4xl rounded-2xl border border-white/40 bg-white/60 backdrop-blur-md shadow-xl p-4 md:p-6">
             <FilterMenu />
           </div>
         </div>
       </section>
 
-      {/* RESULTS */}
-      <section id="results" className="bg-white py-14 px-4">
+      {/* RESULTS — anchor won’t hide under the fixed navbar */}
+      <section
+        id="results"
+        className="bg-white py-14 px-4 scroll-mt-24 md:scroll-mt-28"
+      >
         <div className="max-w-7xl mx-auto">
           <h2 className="font-jomolhari text-2xl md:text-3xl text-custom_black">
             Results
