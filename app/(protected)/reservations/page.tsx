@@ -26,7 +26,7 @@ const reservations: Reservation[] = [
     className: "Compact",
     model: "Renault Clio",
     brand: "Renault",
-    image: "/cars/renault-clio.png", // ✅ exact path/casing
+    image: "/car/renault-clio.png", // ✅ exact path/casing
     pickupDate: "21/08/2025",
     returnDate: "27/08/2025",
     pickupTime: "12:00",
