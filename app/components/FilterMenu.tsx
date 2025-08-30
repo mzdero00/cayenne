@@ -1,4 +1,3 @@
-// app/components/FilterMenu.tsx
 "use client";
 
 import * as React from "react";
@@ -15,7 +14,6 @@ type FormState = {
 const cities = ["Split", "Imotski", "Makarska", "Zadar", "Dubrovnik", "Zagreb"];
 const classes: FormState["carClass"][] = ["Compact", "Comfort", "Comfort+"];
 
-// UI class -> backend `type` for /cars
 type BackendType = "Compact" | "Comfort" | "ComfortPlus";
 const classToType: Record<FormState["carClass"] | "", BackendType | undefined> =
   {
@@ -24,8 +22,6 @@ const classToType: Record<FormState["carClass"] | "", BackendType | undefined> =
     Comfort: "Comfort",
     "Comfort+": "ComfortPlus",
   };
-
-// backend `type` -> UI class (for hydration)
 const typeToClass: Record<BackendType | "", FormState["carClass"] | ""> = {
   "": "",
   Compact: "Compact",
@@ -33,9 +29,24 @@ const typeToClass: Record<BackendType | "", FormState["carClass"] | ""> = {
   ComfortPlus: "Comfort+",
 };
 
-// Unified control styles (same width/height everywhere, shrink nicely on mobile)
+// unified control styling
 const control =
   "h-12 w-full min-w-0 rounded-md border border-black/10 bg-white/90 px-3 text-black text-base";
+
+/** format a Date to local 'YYYY-MM-DDTHH:mm' */
+function toLocalInputValue(d: Date) {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const y = d.getFullYear();
+  const m = pad(d.getMonth() + 1);
+  const day = pad(d.getDate());
+  const h = pad(d.getHours());
+  const min = pad(d.getMinutes());
+  return `${y}-${m}-${day}T${h}:${min}`;
+}
+
+/** string compare works for these ISO-local values */
+const isBefore = (a?: string, b?: string) => !!a && !!b && a < b;
+const isAfter = (a?: string, b?: string) => !!a && !!b && a > b;
 
 export default function FilterMenu() {
   const router = useRouter();
@@ -49,7 +60,14 @@ export default function FilterMenu() {
     carClass: "",
   });
 
-  // Hydrate from URL (keeps selections when returning from /cars)
+  // now (local) for min attributes
+  const nowLocal = React.useMemo(() => {
+    const d = new Date();
+    d.setSeconds(0, 0);
+    return toLocalInputValue(d);
+  }, []);
+
+  // hydrate from URL
   React.useEffect(() => {
     const backendType = (search.get("type") ?? "") as BackendType | "";
     setForm((prev) => ({
@@ -65,12 +83,31 @@ export default function FilterMenu() {
     }));
   }, [search]);
 
+  // Enforce forward-only range when either side changes
+  const onChangePickup = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const v = e.target.value;
+    setForm((p) => {
+      let nextReturn = p.returnTime;
+      if (isBefore(nextReturn, v)) {
+        nextReturn = v; // clamp return to pickup
+      }
+      return { ...p, pickupTime: v, returnTime: nextReturn };
+    });
+  };
+
+  const onChangeReturn = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const v = e.target.value;
+    setForm((p) => {
+      let nextPickup = p.pickupTime;
+      if (isAfter(nextPickup, v)) {
+        nextPickup = v; // clamp pickup to return
+      }
+      return { ...p, returnTime: v, pickupTime: nextPickup };
+    });
+  };
+
   const onChangeSelect =
     (field: keyof FormState) => (e: React.ChangeEvent<HTMLSelectElement>) =>
-      setForm((p) => ({ ...p, [field]: e.target.value }));
-
-  const onChangeDateTime =
-    (field: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement>) =>
       setForm((p) => ({ ...p, [field]: e.target.value }));
 
   const onSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
@@ -87,12 +124,18 @@ export default function FilterMenu() {
     if (mapped) params.set("type", mapped);
 
     router.replace(`/cars?${params.toString()}`, { scroll: false });
-    requestAnimationFrame(() => {
+    requestAnimationFrame(() =>
       document
         .getElementById("results")
-        ?.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
+        ?.scrollIntoView({ behavior: "smooth", block: "start" })
+    );
   };
+
+  // dynamic constraints
+  const pickupMin = nowLocal;
+  const pickupMax = form.returnTime || undefined;
+  const returnMin =
+    form.pickupTime && form.pickupTime > nowLocal ? form.pickupTime : nowLocal;
 
   return (
     <form
@@ -145,8 +188,11 @@ export default function FilterMenu() {
         <input
           type="datetime-local"
           value={form.pickupTime}
-          onChange={onChangeDateTime("pickupTime")}
+          onChange={onChangePickup}
           className={`${control} [color-scheme:light]`}
+          min={pickupMin}
+          max={pickupMax}
+          step={60}
         />
       </label>
 
@@ -158,12 +204,14 @@ export default function FilterMenu() {
         <input
           type="datetime-local"
           value={form.returnTime}
-          onChange={onChangeDateTime("returnTime")}
+          onChange={onChangeReturn}
           className={`${control} [color-scheme:light]`}
+          min={returnMin}
+          step={60}
         />
       </label>
 
-      {/* Car Class (full width on md+) */}
+      {/* Car Class */}
       <label className="block md:col-span-2">
         <span className="block text-sm text-black/80 mb-1">Class</span>
         <select
@@ -180,7 +228,7 @@ export default function FilterMenu() {
         </select>
       </label>
 
-      {/* Search Button */}
+      {/* Search */}
       <div className="md:col-span-2 flex justify-center">
         <button
           type="submit"

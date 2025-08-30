@@ -1,11 +1,24 @@
-// app/components/RentalForm.tsx  (your homepage/hero version)
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useMemo } from "react";
 import { useRouter } from "next/navigation";
+
+function toLocalInputValue(d: Date) {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const y = d.getFullYear();
+  const m = pad(d.getMonth() + 1);
+  const day = pad(d.getDate());
+  const h = pad(d.getHours());
+  const min = pad(d.getMinutes());
+  return `${y}-${m}-${day}T${h}:${min}`;
+}
+
+const isBefore = (a?: string, b?: string) => !!a && !!b && a < b;
+const isAfter = (a?: string, b?: string) => !!a && !!b && a > b;
 
 export default function HomeFilterMenu() {
   const router = useRouter();
+
   const [form, setForm] = useState({
     pickupLocation: "",
     returnLocation: "",
@@ -27,8 +40,28 @@ export default function HomeFilterMenu() {
   const control =
     "h-12 w-full min-w-0 rounded-md border border-black/10 bg-white/70 px-3 text-black";
 
+  const nowLocal = useMemo(() => {
+    const d = new Date();
+    d.setSeconds(0, 0);
+    return toLocalInputValue(d);
+  }, []);
+
   const handleChange = (field: keyof typeof form, value: string) =>
     setForm((prev) => ({ ...prev, [field]: value }));
+
+  const onPickupChange = (v: string) =>
+    setForm((p) => ({
+      ...p,
+      pickupTime: v,
+      returnTime: isBefore(p.returnTime, v) ? v : p.returnTime,
+    }));
+
+  const onReturnChange = (v: string) =>
+    setForm((p) => ({
+      ...p,
+      returnTime: v,
+      pickupTime: isAfter(p.pickupTime, v) ? v : p.pickupTime,
+    }));
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -40,7 +73,6 @@ export default function HomeFilterMenu() {
     if (form.returnTime) params.set("returnTime", form.returnTime);
     if (form.carClass) params.set("carClass", form.carClass);
 
-    // Map class -> backend type for /cars
     const typeMap: Record<string, string> = {
       Compact: "Compact",
       Comfort: "Comfort",
@@ -51,6 +83,11 @@ export default function HomeFilterMenu() {
 
     router.push(`/cars?${params.toString()}#results`);
   };
+
+  const pickupMin = nowLocal;
+  const pickupMax = form.returnTime || undefined;
+  const returnMin =
+    form.pickupTime && form.pickupTime > nowLocal ? form.pickupTime : nowLocal;
 
   return (
     <form
@@ -103,8 +140,11 @@ export default function HomeFilterMenu() {
         <input
           type="datetime-local"
           value={form.pickupTime}
-          onChange={(e) => handleChange("pickupTime", e.target.value)}
+          onChange={(e) => onPickupChange(e.target.value)}
           className={`${control} [color-scheme:light]`}
+          min={pickupMin}
+          max={pickupMax}
+          step={60}
         />
       </label>
 
@@ -116,8 +156,10 @@ export default function HomeFilterMenu() {
         <input
           type="datetime-local"
           value={form.returnTime}
-          onChange={(e) => handleChange("returnTime", e.target.value)}
+          onChange={(e) => onReturnChange(e.target.value)}
           className={`${control} [color-scheme:light]`}
+          min={returnMin}
+          step={60}
         />
       </label>
 
@@ -138,7 +180,7 @@ export default function HomeFilterMenu() {
         </select>
       </label>
 
-      {/* Search Button */}
+      {/* Search */}
       <div className="md:col-span-2 flex justify-center">
         <button
           type="submit"
