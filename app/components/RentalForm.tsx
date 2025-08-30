@@ -1,3 +1,4 @@
+// app/components/RentalForm.tsx  (your homepage/hero version)
 "use client";
 
 import { useState, FormEvent } from "react";
@@ -5,7 +6,6 @@ import { useRouter } from "next/navigation";
 
 export default function HomeFilterMenu() {
   const router = useRouter();
-
   const [form, setForm] = useState({
     pickupLocation: "",
     returnLocation: "",
@@ -24,22 +24,23 @@ export default function HomeFilterMenu() {
   ];
   const classes = ["Compact", "Comfort", "Comfort+"];
 
+  const control =
+    "h-12 w-full min-w-0 rounded-md border border-black/10 bg-white/70 px-3 text-black";
+
   const handleChange = (field: keyof typeof form, value: string) =>
     setForm((prev) => ({ ...prev, [field]: value }));
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-
     const params = new URLSearchParams();
 
-    // Always include what user picked (so you can show/search on /cars)
     if (form.pickupLocation) params.set("pickupLocation", form.pickupLocation);
     if (form.returnLocation) params.set("returnLocation", form.returnLocation);
     if (form.pickupTime) params.set("pickupTime", form.pickupTime);
     if (form.returnTime) params.set("returnTime", form.returnTime);
     if (form.carClass) params.set("carClass", form.carClass);
 
-    // Map class -> /cars "type" (your backend expects Compact | Comfort | ComfortPlus)
+    // Map class -> backend type for /cars
     const typeMap: Record<string, string> = {
       Compact: "Compact",
       Comfort: "Comfort",
@@ -57,68 +58,91 @@ export default function HomeFilterMenu() {
       className="bg-white/30 backdrop-blur-md p-6 md:p-10 rounded-3xl shadow-lg w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-4 text-black"
     >
       {/* Pickup Location */}
-      <select
-        value={form.pickupLocation}
-        onChange={(e) => handleChange("pickupLocation", e.target.value)}
-        className="p-3 rounded-md bg-white/70"
-      >
-        <option value="">Pick up Location</option>
-        {cities.map((city) => (
-          <option key={city} value={city}>
-            {city}
-          </option>
-        ))}
-      </select>
+      <label className="block">
+        <span className="block text-sm text-black/80 mb-1">
+          Pickup location
+        </span>
+        <select
+          value={form.pickupLocation}
+          onChange={(e) => handleChange("pickupLocation", e.target.value)}
+          className={control}
+        >
+          <option value="">Select city</option>
+          {cities.map((city) => (
+            <option key={city} value={city}>
+              {city}
+            </option>
+          ))}
+        </select>
+      </label>
 
       {/* Return Location */}
-      <select
-        value={form.returnLocation}
-        onChange={(e) => handleChange("returnLocation", e.target.value)}
-        className="p-3 rounded-md bg-white/70"
-      >
-        <option value="">Return Location</option>
-        {cities.map((city) => (
-          <option key={city} value={city}>
-            {city}
-          </option>
-        ))}
-      </select>
+      <label className="block">
+        <span className="block text-sm text-black/80 mb-1">
+          Return location
+        </span>
+        <select
+          value={form.returnLocation}
+          onChange={(e) => handleChange("returnLocation", e.target.value)}
+          className={control}
+        >
+          <option value="">Select city</option>
+          {cities.map((city) => (
+            <option key={city} value={city}>
+              {city}
+            </option>
+          ))}
+        </select>
+      </label>
 
       {/* Pickup Time */}
-      <input
-        type="datetime-local"
-        value={form.pickupTime}
-        onChange={(e) => handleChange("pickupTime", e.target.value)}
-        className="p-3 rounded-md bg-white/70"
-      />
+      <label className="block">
+        <span className="block text-sm text-black/80 mb-1">
+          Pickup date & time
+        </span>
+        <input
+          type="datetime-local"
+          value={form.pickupTime}
+          onChange={(e) => handleChange("pickupTime", e.target.value)}
+          className={`${control} [color-scheme:light]`}
+        />
+      </label>
 
       {/* Return Time */}
-      <input
-        type="datetime-local"
-        value={form.returnTime}
-        onChange={(e) => handleChange("returnTime", e.target.value)}
-        className="p-3 rounded-md bg-white/70"
-      />
+      <label className="block">
+        <span className="block text-sm text-black/80 mb-1">
+          Return date & time
+        </span>
+        <input
+          type="datetime-local"
+          value={form.returnTime}
+          onChange={(e) => handleChange("returnTime", e.target.value)}
+          className={`${control} [color-scheme:light]`}
+        />
+      </label>
 
       {/* Car Class */}
-      <select
-        value={form.carClass}
-        onChange={(e) => handleChange("carClass", e.target.value)}
-        className="p-3 rounded-md bg-white/70 text-black w-full col-span-1 md:col-span-2"
-      >
-        <option value="">Class (any)</option>
-        {classes.map((cls) => (
-          <option key={cls} value={cls}>
-            {cls}
-          </option>
-        ))}
-      </select>
+      <label className="block md:col-span-2">
+        <span className="block text-sm text-black/80 mb-1">Class</span>
+        <select
+          value={form.carClass}
+          onChange={(e) => handleChange("carClass", e.target.value)}
+          className={control}
+        >
+          <option value="">Any</option>
+          {classes.map((cls) => (
+            <option key={cls} value={cls}>
+              {cls}
+            </option>
+          ))}
+        </select>
+      </label>
 
       {/* Search Button */}
       <div className="md:col-span-2 flex justify-center">
         <button
           type="submit"
-          className="bg-primary_orange text-white font-medium px-6 py-3 rounded-md hover:opacity-90"
+          className="h-12 px-6 rounded-md bg-primary_orange text-white font-medium hover:opacity-90"
         >
           Search
         </button>
