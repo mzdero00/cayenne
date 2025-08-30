@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Menu } from "lucide-react";
 import UserDropdown from "./UserDropdown";
+import MobileMenu from "./MobileMenu";
 
 type User = { id?: string; name?: string | null } | null;
 type NavItem = {
@@ -26,6 +27,7 @@ export default function NavbarClient({
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
+  // lock body scroll when sheet is open
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => {
@@ -41,6 +43,7 @@ export default function NavbarClient({
   const NavLink = ({ it }: { it: NavItem }) => {
     const isActive = !it.external && pathname === it.href;
     const cls = `${common} ${isActive ? "text-black font-semibold" : ""}`;
+
     return it.external ? (
       <a
         key={it.href}
@@ -67,9 +70,9 @@ export default function NavbarClient({
 
   return (
     <>
-      {/* NOTE: add relative here so we can absolutely center the links */}
-      <nav className="relative flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
-        {/* Logo (left) */}
+      {/* z-50 so it sits above hero overlays; relative so we can center the link row */}
+      <nav className="relative z-50 flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
+        {/* Left: Logo */}
         <Link href="/" className="shrink-0">
           <Image
             src="/logo.png"
@@ -81,7 +84,7 @@ export default function NavbarClient({
           />
         </Link>
 
-        {/* Desktop links — absolutely centered to the navbar (viewport-aligned) */}
+        {/* Center: Desktop nav links (perfectly centered to the navbar width) */}
         <div
           className="
             hidden md:flex gap-10 text-lg font-normal text-black font-jomolhari
@@ -93,7 +96,7 @@ export default function NavbarClient({
           ))}
         </div>
 
-        {/* Desktop user / auth (right) */}
+        {/* Right: User / Auth */}
         <div className="hidden md:block">
           {user ? (
             <UserDropdown
@@ -118,17 +121,25 @@ export default function NavbarClient({
           )}
         </div>
 
-        {/* Mobile hamburger (unchanged) */}
+        {/* Mobile hamburger */}
         <button
           onClick={() => setOpen(true)}
           className="md:hidden p-2 rounded-md border border-black/10 bg-white/70 backdrop-blur text-custom_black"
           aria-label="Open menu"
+          aria-expanded={open}
         >
           <Menu className="w-5 h-5" />
         </button>
       </nav>
 
-      {/* your existing mobile slide-over stays as-is */}
+      {/* Mobile slide-over (your existing component) */}
+      <MobileMenu
+        open={open}
+        onClose={() => setOpen(false)}
+        items={items}
+        user={user}
+        pathname={pathname}
+      />
     </>
   );
 }
