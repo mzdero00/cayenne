@@ -7,6 +7,10 @@ import { ArrowLeft } from "lucide-react";
 import { supabaseBrowser } from "@/lib/supabase-browser";
 import { useRouter, useSearchParams } from "next/navigation";
 
+export const metadata = {
+  title: "Login | Cayenne",
+};
+
 export default function LoginPage() {
   return (
     <Suspense fallback={<PageFallback />}>

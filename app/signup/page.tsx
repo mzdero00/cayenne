@@ -7,6 +7,10 @@ import { supabaseBrowser } from "@/lib/supabase-browser";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+export const metadata = {
+  title: "Sign Up | Cayenne",
+};
+
 export default function SignUpPage() {
   const router = useRouter();
   const [pending, setPending] = useState(false);

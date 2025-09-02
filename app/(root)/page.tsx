@@ -7,7 +7,7 @@ import PartnerSection from "../components/PartnerSection";
 import Footer from "../components/Footer";
 
 export const metadata = {
-  title: "Cayenne - Car rental services",
+  title: "Home | Cayenne",
 };
 
 export default function HomePage() {

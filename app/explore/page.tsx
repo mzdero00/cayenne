@@ -4,6 +4,10 @@ import Footer from "../components/Footer";
 import ExploreInteractive from "../components/ExploreInteractive";
 import heroExplore from "@/public/heroimage/heroimage_explore.jpg";
 
+export const metadata = {
+  title: "Explore Dalmatia | Cayenne",
+};
+
 export default function ExplorePage() {
   return (
     <>
