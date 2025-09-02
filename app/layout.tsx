@@ -23,8 +23,8 @@ const jomolhari = localFont({
 });
 
 export const metadata = {
-  title: "My App",
-  description: "Using Google Fonts with Tailwind",
+  title: "cayenne",
+  description: "A spicy code snippet manager",
 };
 
 export default function RootLayout({

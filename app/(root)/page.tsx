@@ -6,6 +6,10 @@ import CarCategorySection from "../components/CarCategorySection";
 import PartnerSection from "../components/PartnerSection";
 import Footer from "../components/Footer";
 
+export const metadata = {
+  title: "Cayenne - Car rental services",
+};
+
 export default function HomePage() {
   return (
     <>
