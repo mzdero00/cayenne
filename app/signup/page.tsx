@@ -24,7 +24,7 @@ export default function SignUpPage() {
     const email = String(fd.get("email") || "");
     const password = String(fd.get("password") || "");
     const confirmPassword = String(fd.get("confirmPassword") || "");
-    const dob = String(fd.get("dob") || ""); // stored in user_metadata (optional)
+    const dob = String(fd.get("dob") || "");
 
     if (password !== confirmPassword) {
       setPending(false);
@@ -48,11 +48,9 @@ export default function SignUpPage() {
 
   return (
     <main className="relative min-h-screen bg-[#2b3238] text-white">
-      {/* Header row aligned to card width (max-w-3xl) */}
       <div className="pt-10 sm:pt-12">
         <div className="mx-auto w-full max-w-3xl px-4">
           <div className="relative flex items-center justify-center">
-            {/* Back button (arrow only on phones) */}
             <Link
               href="/"
               aria-label="Back to home"
@@ -67,14 +65,12 @@ export default function SignUpPage() {
         </div>
       </div>
 
-      {/* Card */}
       <section className="mt-6 flex items-start justify-center px-4 pb-24">
         <div className="relative w-full max-w-3xl rounded-xl bg-white text-custom_black shadow-xl border border-black/10">
           <form
             onSubmit={onSubmit}
             className="grid grid-cols-1 md:grid-cols-2 gap-5 p-6 md:p-8"
           >
-            {/* First row */}
             <label className="block">
               <span className="block text-sm text-gray-700 mb-1">
                 First Name
@@ -99,7 +95,6 @@ export default function SignUpPage() {
               />
             </label>
 
-            {/* Second row */}
             <label className="block">
               <span className="block text-sm text-gray-700 mb-1">
                 Last Name
@@ -125,7 +120,6 @@ export default function SignUpPage() {
               />
             </label>
 
-            {/* Third row */}
             <label className="block">
               <span className="block text-sm text-gray-700 mb-1">
                 Date of Birth
@@ -151,7 +145,6 @@ export default function SignUpPage() {
               />
             </label>
 
-            {/* Submit row */}
             <div className="md:col-span-2 flex items-center justify-center pt-2">
               <button
                 type="submit"
@@ -163,7 +156,6 @@ export default function SignUpPage() {
             </div>
           </form>
 
-          {/* Brand mark inside the card */}
           <div className="pointer-events-none absolute bottom-4 right-4">
             <Image
               src="/logo.png"
@@ -177,7 +169,6 @@ export default function SignUpPage() {
         </div>
       </section>
 
-      {/* Footer corners */}
       <div className="pointer-events-none select-none absolute bottom-4 left-6 text-sm text-white/90 tracking-wide">
         EN HR DE
       </div>

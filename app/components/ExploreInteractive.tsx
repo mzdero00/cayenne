@@ -12,7 +12,6 @@ type City = {
   alt: string;
 };
 
-// Row shape from Supabase
 type CityRow = {
   id: string;
   name: string;
@@ -82,7 +81,6 @@ function CityChip({
   );
 }
 
-/** Mobile horizontal chip rail (no arrows), auto-centers active chip */
 function MobileChipRail({
   cities,
   selectedId,
@@ -177,7 +175,6 @@ export default function ExploreInteractive() {
 
   return (
     <>
-      {/* Mobile: clean chip rail */}
       {!loading && (
         <MobileChipRail
           cities={cities}
@@ -186,7 +183,6 @@ export default function ExploreInteractive() {
         />
       )}
 
-      {/* Tablet/Desktop: original pills + curved arrows */}
       <section className="hidden md:block bg-custom_lightgray py-10 text-center font-jomolhari">
         <div className="max-w-6xl mx-auto px-4 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
           {loading && (
@@ -206,7 +202,6 @@ export default function ExploreInteractive() {
         </div>
       </section>
 
-      {/* Details */}
       <section
         id="city-details"
         ref={detailsRef}

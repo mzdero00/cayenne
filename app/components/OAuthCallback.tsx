@@ -14,7 +14,6 @@ export default function OAuthCallback() {
 
     if (!hasCode && !hasError) return;
 
-    // Exchange ?code=... for a session and set cookies
     supabaseBrowser()
       .auth.exchangeCodeForSession(window.location.search)
       .then(({ error }) => {
@@ -23,7 +22,6 @@ export default function OAuthCallback() {
         }
       })
       .finally(() => {
-        // Clean URL and refresh server components (Navbar)
         url.searchParams.delete("code");
         url.searchParams.delete("state");
         url.searchParams.delete("error");

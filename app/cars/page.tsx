@@ -104,7 +104,6 @@ async function fetchCars(searchParams: ParamsRecord) {
 export default async function CarsPage({
   searchParams,
 }: {
-  // Next.js 15 passes this as a Promise
   searchParams: Promise<ParamsRecord>;
 }) {
   const params = await searchParams;
@@ -114,7 +113,6 @@ export default async function CarsPage({
     <>
       <Navbar />
 
-      {/* HERO with centered, bounded filter that never overlaps the navbar */}
       <section className="relative h-[70svh] w-full font-jomolhari">
         <Image
           src="/heroimage/heroimage_cars.png"
@@ -125,10 +123,8 @@ export default async function CarsPage({
           priority
         />
 
-        {/* subtle overlay */}
         <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/10 via-black/5 to-transparent" />
 
-        {/* Reserve navbar height, then center in remaining space */}
         <div className="absolute inset-0 px-4">
           <div
             className="
@@ -148,7 +144,6 @@ export default async function CarsPage({
                   p-5 sm:p-6
                 "
               >
-                {/* FilterMenu uses useSearchParams -> wrap in Suspense */}
                 <Suspense fallback={null}>
                   <FilterMenu />
                 </Suspense>
@@ -158,7 +153,6 @@ export default async function CarsPage({
         </div>
       </section>
 
-      {/* RESULTS — anchor won’t hide under the fixed navbar */}
       <section
         id="results"
         className="bg-white py-14 px-4 scroll-mt-24 md:scroll-mt-28"

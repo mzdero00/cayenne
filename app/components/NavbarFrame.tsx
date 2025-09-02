@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 export default function NavbarFrame({
   children,
-  solid = false, // force white from the start (for pages without a hero)
+  solid = false,
 }: {
   children: React.ReactNode;
   solid?: boolean;
@@ -13,12 +13,11 @@ export default function NavbarFrame({
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 5);
-    onScroll(); // set initial state on mount
+    onScroll();
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // At top: subtle dark→transparent gradient. After scroll (or solid=true): white.
   const bgClass =
     solid || scrolled
       ? "bg-white backdrop-blur supports-[backdrop-filter]:bg-white shadow-md"

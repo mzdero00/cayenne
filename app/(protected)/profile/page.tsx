@@ -4,7 +4,6 @@ import Footer from "../../components/Footer";
 import { redirect } from "next/navigation";
 import { supabaseServer } from "@/lib/supabase-server"; // server helper (async)
 
-// File: app/profile/page.tsx
 export const metadata = {
   title: "My Profile | Cayenne",
 };

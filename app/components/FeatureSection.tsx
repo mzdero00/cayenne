@@ -25,7 +25,6 @@ export default function FeatureSection() {
         </h3>
       </div>
 
-      {/* Features */}
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-6 pt-20">
         <FeatureCard
           icon="/icons/car-insurance.png"

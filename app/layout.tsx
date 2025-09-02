@@ -1,10 +1,8 @@
-// app/layout.tsx
 import "./globals.css";
 import OAuthCallback from "./components/OAuthCallback";
 import { Josefin_Sans, Sansita_Swashed } from "next/font/google";
 import localFont from "next/font/local";
 
-// Google fonts (Next hosts/optimizes them)
 const josefin = Josefin_Sans({
   subsets: ["latin"],
   variable: "--font-josefin",
@@ -16,8 +14,6 @@ const sansita = Sansita_Swashed({
   display: "swap",
 });
 
-// Jomolhari is not in next/font/google → self-host
-// Add the file to: public/fonts/jomolhari.woff2
 const jomolhari = localFont({
   src: "../public/fonts/jomolhari.woff2",
   variable: "--font-jomolhari",

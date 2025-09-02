@@ -16,7 +16,6 @@ export default function ContactForm() {
     const form = e.currentTarget;
     const data = new FormData(form);
 
-    // optional client-side guard
     if (
       !String(data.get("name") || "").trim() ||
       !String(data.get("email") || "").trim() ||
@@ -100,7 +99,7 @@ export default function ContactForm() {
           className="px-5 py-2 rounded-md bg-primary_orange text-white font-medium hover:opacity-95 transition disabled:opacity-60"
         >
           {status === "sent"
-            ? "Sent ✓"
+            ? "Sent"
             : status === "sending"
             ? "Sending…"
             : "Send message"}

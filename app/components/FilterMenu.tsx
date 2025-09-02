@@ -1,4 +1,3 @@
-// app/components/FilterMenu.tsx
 "use client";
 
 import * as React from "react";
@@ -30,11 +29,9 @@ const typeToClass: Record<BackendType | "", FormState["carClass"] | ""> = {
   ComfortPlus: "Comfort+",
 };
 
-// ⬇️ slightly shorter input height
 const control =
   "h-11 w-full min-w-0 rounded-md border border-black/10 bg-white/90 px-3 text-black text-base";
 
-/** format Date -> 'YYYY-MM-DDTHH:mm' (local) */
 function toLocalInputValue(d: Date) {
   const pad = (n: number) => String(n).padStart(2, "0");
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(
@@ -129,7 +126,6 @@ export default function FilterMenu() {
       onSubmit={onSubmit}
       className="grid grid-cols-1 md:grid-cols-2 gap-3 text-black"
     >
-      {/* Pickup Location */}
       <label className="block">
         <span className="block text-sm text-black/80 mb-0.5">
           Pickup location
@@ -148,7 +144,6 @@ export default function FilterMenu() {
         </select>
       </label>
 
-      {/* Return Location */}
       <label className="block">
         <span className="block text-sm text-black/80 mb-0.5">
           Return location
@@ -167,7 +162,6 @@ export default function FilterMenu() {
         </select>
       </label>
 
-      {/* Pickup Time */}
       <label className="block">
         <span className="block text-sm text-black/80 mb-0.5">
           Pickup date & time
@@ -183,7 +177,6 @@ export default function FilterMenu() {
         />
       </label>
 
-      {/* Return Time */}
       <label className="block">
         <span className="block text-sm text-black/80 mb-0.5">
           Return date & time
@@ -198,7 +191,6 @@ export default function FilterMenu() {
         />
       </label>
 
-      {/* Car Class */}
       <label className="block md:col-span-2">
         <span className="block text-sm text-black/80 mb-0.5">Class</span>
         <select
@@ -215,7 +207,6 @@ export default function FilterMenu() {
         </select>
       </label>
 
-      {/* Search */}
       <div className="md:col-span-2 flex justify-center">
         <button
           type="submit"

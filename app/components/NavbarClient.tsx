@@ -1,4 +1,3 @@
-// app/components/NavbarClient.tsx
 "use client";
 
 import Link from "next/link";
@@ -27,7 +26,6 @@ export default function NavbarClient({
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
-  // lock body scroll when sheet is open
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => {
@@ -70,9 +68,7 @@ export default function NavbarClient({
 
   return (
     <>
-      {/* z-50 so it sits above hero overlays; relative so we can center the link row */}
       <nav className="relative z-50 flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
-        {/* Left: Logo */}
         <Link href="/" className="shrink-0">
           <Image
             src="/logo.png"
@@ -84,7 +80,6 @@ export default function NavbarClient({
           />
         </Link>
 
-        {/* Center: Desktop nav links (perfectly centered to the navbar width) */}
         <div
           className="
             hidden md:flex gap-10 text-lg font-normal text-black font-jomolhari
@@ -96,7 +91,6 @@ export default function NavbarClient({
           ))}
         </div>
 
-        {/* Right: User / Auth */}
         <div className="hidden md:block">
           {user ? (
             <UserDropdown
@@ -121,7 +115,6 @@ export default function NavbarClient({
           )}
         </div>
 
-        {/* Mobile hamburger */}
         <button
           onClick={() => setOpen(true)}
           className="md:hidden p-2 rounded-md border border-black/10 bg-white/70 backdrop-blur text-custom_black"
@@ -132,7 +125,6 @@ export default function NavbarClient({
         </button>
       </nav>
 
-      {/* Mobile slide-over (your existing component) */}
       <MobileMenu
         open={open}
         onClose={() => setOpen(false)}

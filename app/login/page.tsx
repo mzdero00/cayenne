@@ -1,4 +1,3 @@
-// app/login/page.tsx
 "use client";
 
 import { Suspense, useState } from "react";
@@ -8,7 +7,6 @@ import { ArrowLeft } from "lucide-react";
 import { supabaseBrowser } from "@/lib/supabase-browser";
 import { useRouter, useSearchParams } from "next/navigation";
 
-/** Wrapper that provides the Suspense boundary */
 export default function LoginPage() {
   return (
     <Suspense fallback={<PageFallback />}>
@@ -25,7 +23,6 @@ function PageFallback() {
   );
 }
 
-/** The actual page content that uses useSearchParams */
 function LoginInner() {
   const router = useRouter();
   const search = useSearchParams();
@@ -46,7 +43,7 @@ function LoginInner() {
     setPending(false);
 
     if (error) return alert(error.message);
-    router.replace("/"); // back home after login
+    router.replace("/");
   }
 
   async function loginWithGithub() {
@@ -61,11 +58,9 @@ function LoginInner() {
 
   return (
     <main className="relative min-h-screen bg-[#2b3238] text-white">
-      {/* Header row aligned to card width (max-w-lg) */}
       <div className="pt-10 sm:pt-12">
         <div className="mx-auto w-full max-w-lg px-4">
           <div className="relative flex items-center justify-center">
-            {/* Back button (arrow only on phones) */}
             <Link
               href="/"
               aria-label="Back to home"
@@ -80,10 +75,8 @@ function LoginInner() {
         </div>
       </div>
 
-      {/* Card */}
       <section className="mt-6 flex items-start justify-center px-4 pb-24">
         <div className="relative w-full max-w-lg rounded-xl bg-white text-custom_black shadow-xl border border-black/10">
-          {/* NOTE: extra bottom padding so the logo never overlaps content */}
           <div className="p-6 md:p-8 pb-20">
             {showCheckEmail && (
               <p className="mb-4 text-sm text-gray-600">
@@ -129,7 +122,6 @@ function LoginInner() {
               </div>
             </form>
 
-            {/* Red GitHub button; full width on mobile */}
             <div className="mt-6 flex items-center justify-center">
               <button
                 type="button"
@@ -147,7 +139,6 @@ function LoginInner() {
             </div>
           </div>
 
-          {/* Lowered Cayenne logo (absolute, but space reserved above via pb-20) */}
           <div className="pointer-events-none absolute bottom-2 right-4">
             <Image
               src="/logo.png"

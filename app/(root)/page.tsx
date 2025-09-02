@@ -1,4 +1,3 @@
-// app/page.tsx
 import { Suspense } from "react";
 import FilterMenu from "../components/FilterMenu";
 import LanguageSelector from "../components/LanguageSelector";
@@ -14,17 +13,15 @@ export default function HomePage() {
         className="relative min-h-[100svh] w-full bg-cover bg-center"
         style={{ backgroundImage: "url('/heroimage/heroimage.jpg')" }}
       >
-        {/* Soft overlay */}
         <div className="absolute inset-0 bg-black/10 z-0" />
 
-        {/* Language selector pinned to hero; hide on phones */}
         <div className="absolute left-3 bottom-3 md:left-6 md:bottom-6 z-10 hidden md:block">
           <Suspense fallback={null}>
             <LanguageSelector />
           </Suspense>
         </div>
 
-        {/* Centered glass card — matching look & mobile-safe height */}
+        {/* Centered Filter Menu */}
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full px-3 z-10">
           <div
             className="

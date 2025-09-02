@@ -3,7 +3,7 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 
 export async function POST(req: NextRequest) {
   try {
-    // Accept multipart/form-data from your <form>
+    
     const form = await req.formData();
     const name = String(form.get("name") || "").trim();
     const email = String(form.get("email") || "").trim();
@@ -17,8 +17,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Create a Supabase server client bound to this request/response (cookies)
-    const res = NextResponse.json({ ok: true }); // we'll mutate cookies if needed
+    
+    const res = NextResponse.json({ ok: true });
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
       }
     );
 
-    // Attach user_id if logged in (optional)
+    
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -60,9 +60,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Return success (and include any cookie changes)
+  
     return res;
-  // ✅ replace with
+
 } catch (e: unknown) {
   const msg = e instanceof Error ? e.message : String(e);
   console.error("Contact API error:", msg);

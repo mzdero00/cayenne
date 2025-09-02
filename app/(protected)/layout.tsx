@@ -1,4 +1,3 @@
-// app/(protected)/layout.tsx
 import { supabaseServer } from "@/lib/supabase-server";
 import { redirect } from "next/navigation";
 

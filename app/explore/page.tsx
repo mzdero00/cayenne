@@ -9,7 +9,6 @@ export default function ExplorePage() {
     <>
       <Navbar />
 
-      {/* Hero Section */}
       <section className="relative h-[70vh] w-full font-jomolhari">
         <Image
           src={heroExplore}
@@ -30,10 +29,8 @@ export default function ExplorePage() {
         </div>
       </section>
 
-      {/* Modern journey + interactive details */}
       <ExploreInteractive />
 
-      {/* TripAdvisor CTA */}
       <section className="bg-white py-12 text-center font-jomolhari">
         <p className="text-gray-700">
           If you want to learn more, please visit TripAdvisor.

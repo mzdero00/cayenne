@@ -46,7 +46,7 @@ const CARS: Car[] = [
 ];
 
 interface Props {
-  viewAllHref?: string; // defaults to /cars
+  viewAllHref?: string;
 }
 
 export default function CarCategorySection({ viewAllHref = "/cars" }: Props) {
@@ -54,7 +54,7 @@ export default function CarCategorySection({ viewAllHref = "/cars" }: Props) {
 
   const initialIndex = CARS.findIndex((c) => c.id === "megane") || 0;
   const [centerIndex, setCenterIndex] = useState(initialIndex);
-  const [direction, setDirection] = useState<Dir>(1); // 1 => next (right), -1 => prev (left)
+  const [direction, setDirection] = useState<Dir>(1);
 
   const prev = useCallback(() => {
     setDirection(-1);
@@ -73,15 +73,12 @@ export default function CarCategorySection({ viewAllHref = "/cars" }: Props) {
 
   const centerCar = CARS[centerIndex];
 
-  // sizes: smaller sides, bigger center
   const CENTER_SCALE = 1.28;
   const SIDE_SCALE = 0.66;
 
   const scaleFor = (slot: Slot) =>
     slot === "center" ? CENTER_SCALE : SIDE_SCALE;
 
-  // Only animate the pair involved in the move:
-  // right click => animate { left, center }, left click => animate { right, center }
   const isAnimated = (slot: Slot, dir: Dir) =>
     dir === 1
       ? slot === "left" || slot === "center"
@@ -92,19 +89,17 @@ export default function CarCategorySection({ viewAllHref = "/cars" }: Props) {
       ? { duration: 0.001 }
       : isAnimated(slot, direction)
       ? { type: "spring" as const, stiffness: 260, damping: 26, mass: 0.6 }
-      : { duration: 0.001 }; // unaffected slot snaps instantly
+      : { duration: 0.001 };
 
   return (
     <section className="bg-custom_lightgray py-16 px-4">
       <div className="max-w-6xl mx-auto flex flex-col items-center text-center space-y-10">
-        {/* Cars */}
         <div className="flex flex-col gap-6 md:gap-10 items-center">
           <div
             className="relative flex items-end justify-center w-full gap-6 md:gap-12 select-none"
             aria-live="polite"
             style={{ minHeight: 160 }}
           >
-            {/* Left */}
             <Link
               href="/cars"
               aria-label={`Go to cars (left: ${CARS[indices.left].name})`}
@@ -128,7 +123,6 @@ export default function CarCategorySection({ viewAllHref = "/cars" }: Props) {
               </motion.div>
             </Link>
 
-            {/* Center */}
             <Link
               href="/cars"
               aria-label={`Go to cars (selected: ${CARS[indices.center].name})`}
@@ -153,7 +147,6 @@ export default function CarCategorySection({ viewAllHref = "/cars" }: Props) {
               </motion.div>
             </Link>
 
-            {/* Right */}
             <Link
               href="/cars"
               aria-label={`Go to cars (right: ${CARS[indices.right].name})`}
@@ -178,7 +171,6 @@ export default function CarCategorySection({ viewAllHref = "/cars" }: Props) {
             </Link>
           </div>
 
-          {/* Category selector */}
           <div className="flex items-center gap-3 text-lg text-custom_black">
             <button
               aria-label="Previous car"
@@ -188,7 +180,6 @@ export default function CarCategorySection({ viewAllHref = "/cars" }: Props) {
               <ChevronLeft className="w-5 h-5" />
             </button>
 
-            {/* Category text navigates to /cars */}
             <Link
               href="/cars"
               aria-label={`Go to cars (category: ${centerCar.category})`}
@@ -206,7 +197,6 @@ export default function CarCategorySection({ viewAllHref = "/cars" }: Props) {
             </button>
           </div>
 
-          {/* View All Button — goes to /cars */}
           <Link
             href={viewAllHref}
             className="font-jomolhari bg-primary_green text-white font-medium px-6 py-2 rounded-md hover:opacity-90 active:scale-[0.98] transition"
@@ -215,7 +205,6 @@ export default function CarCategorySection({ viewAllHref = "/cars" }: Props) {
             View all vehicles
           </Link>
 
-          {/* Footer note */}
           <p className="font-sansita text-custom_black italic text-3xl mt-12">
             Collaborations
           </p>

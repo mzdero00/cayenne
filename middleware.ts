@@ -1,4 +1,4 @@
-// middleware.ts
+
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
@@ -24,10 +24,10 @@ export async function middleware(req: NextRequest) {
     }
   );
 
-  // 👇 This exchanges ?code=... for a session and sets the auth cookies
+
   await supabase.auth.getSession();
 
-  // Optional: clean the URL after OAuth
+
   const url = new URL(req.url);
   if (url.searchParams.has("code")) {
     url.searchParams.delete("code");
@@ -37,7 +37,7 @@ export async function middleware(req: NextRequest) {
   return res;
 }
 
-// Run for all pages (skip static assets)
+
 export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };

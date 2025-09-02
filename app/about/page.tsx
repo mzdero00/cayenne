@@ -15,7 +15,6 @@ export default function AboutPage() {
     <>
       <Navbar />
 
-      {/* HERO */}
       <section className="relative min-h-[70vh] w-full font-jomolhari">
         <Image
           src={heroAbout}
@@ -27,7 +26,6 @@ export default function AboutPage() {
         />
         <div className="absolute inset-0 bg-black/35" />
 
-        {/* Headline + Glass Form (relative so the section grows to fit) */}
         <div className="relative z-10 mx-auto w-full max-w-4xl px-4 pt-28 pb-10">
           <h1 className="text-white text-3xl md:text-5xl font-light drop-shadow-sm text-center">
             Have a question?
@@ -41,7 +39,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ABOUT + MAP */}
       <section className="bg-white py-14 px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
           <div>
@@ -87,7 +84,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* FOOTER */}
       <Footer />
     </>
   );

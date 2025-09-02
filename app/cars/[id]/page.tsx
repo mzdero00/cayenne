@@ -80,13 +80,11 @@ export default async function CarPage({
 
       <main className="flex-1 pt-20 md:pt-24">
         <div className="max-w-5xl mx-auto px-4 pb-10">
-          {/* Title */}
           <h1 className="font-jomolhari text-xl md:text-2xl text-custom_black mb-2">
             {niceName}
           </h1>
           <div className="h-[2px] w-28 bg-[#7fbf7f]" />
 
-          {/* Top gray box: image only */}
           <div className="mt-6 rounded-lg border border-gray-200 bg-[#F5F5F5] shadow-[0_3px_0_0_rgba(0,0,0,0.15)] p-5 md:p-6">
             <div className="relative mx-auto w-full max-w-3xl aspect-[5/3] rounded-xl overflow-hidden">
               <Image
@@ -99,9 +97,7 @@ export default async function CarPage({
             </div>
           </div>
 
-          {/* Two cards row: left details / right price */}
           <div className="mt-8 grid md:grid-cols-2 gap-8">
-            {/* LEFT: Details */}
             <section className="rounded-lg border border-gray-200 p-6 bg-white">
               <h2 className="font-jomolhari text-lg md:text-xl mb-4 text-custom_black">
                 Vehicle
@@ -132,7 +128,6 @@ export default async function CarPage({
               </div>
             </section>
 
-            {/* RIGHT: Price / CTA */}
             <section className="rounded-lg border border-gray-200 p-6 bg-white">
               <div className="text-2xl font-semibold text-custom_black">
                 {car.price_per_day}€{" "}

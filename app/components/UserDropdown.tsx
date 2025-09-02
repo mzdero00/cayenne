@@ -6,7 +6,7 @@ import { logout } from "@/app/actions/logout";
 
 type Props = {
   username: string;
-  userId: string; // still accepted, now actually used
+  userId: string;
 };
 
 export default function UserDropdown({ username, userId }: Props) {
@@ -29,9 +29,8 @@ export default function UserDropdown({ username, userId }: Props) {
     <div
       ref={ref}
       className="relative flex items-center gap-2"
-      data-userid={userId} // marks userId as used, no UI change
+      data-userid={userId}
     >
-      {/* Username (click to open) */}
       <span
         onClick={() => setUserOpen((prev) => !prev)}
         className={`group relative cursor-pointer font-medium text-black px-2 py-1 transition-all duration-150 font-jomolhari${
@@ -49,7 +48,6 @@ export default function UserDropdown({ username, userId }: Props) {
         />
       </span>
 
-      {/* User dropdown */}
       {userOpen && (
         <div className="absolute right-0 top-full mt-2 w-48 bg-white shadow-lg rounded-md py-2 z-50">
           <Link

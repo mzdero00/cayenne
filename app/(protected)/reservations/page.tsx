@@ -9,24 +9,23 @@ export const metadata = {
 
 type Reservation = {
   id: string;
-  className: string; // "Compact"
-  model: string; // "Renault Clio"
-  brand?: string; // "Renault"
-  image: string; // car image path
-  pickupDate: string; // dd/mm/yyyy
+  className: string;
+  model: string;
+  brand?: string;
+  image: string;
+  pickupDate: string;
   returnDate: string;
-  pickupTime: string; // "12:00"
+  pickupTime: string;
   status: "Paid" | "Unpaid" | "Pending";
 };
 
-// Demo data — replace with real user reservations.
 const reservations: Reservation[] = [
   {
     id: "abc123",
     className: "Compact",
     model: "Renault Clio",
     brand: "Renault",
-    image: "/car/renault-clio.png", // ✅ exact path/casing
+    image: "/car/renault-clio.png",
     pickupDate: "21/08/2025",
     returnDate: "27/08/2025",
     pickupTime: "12:00",
@@ -107,12 +106,12 @@ function brandLogoPath(brand?: string) {
   if (!brand) return "";
   const key = brand.toLowerCase();
   if (key === "renault") return "/icons/renault_logo.png";
-  return ""; // add more brand logos here if needed
+  return "";
 }
 
 function ReservationCard({ res }: { res: Reservation }) {
   const href = `/reservations/${res.id}`;
-  const logo = brandLogoPath(res.brand); // <-- use the helper
+  const logo = brandLogoPath(res.brand);
 
   return (
     <Link
@@ -122,7 +121,6 @@ function ReservationCard({ res }: { res: Reservation }) {
     >
       <article className="rounded-xl border border-black/10 bg-white shadow-sm hover:shadow-md transition-shadow p-4 sm:p-5 cursor-pointer">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 min-h-[160px]">
-          {/* 1) INFO */}
           <div className="order-2 md:order-1">
             <div className="text-lg font-semibold text-black mb-2">
               {res.className}
@@ -142,7 +140,6 @@ function ReservationCard({ res }: { res: Reservation }) {
             </div>
           </div>
 
-          {/* 2) LOGO + CAR (centered) */}
           <div className="order-1 md:order-2 flex flex-col items-center justify-center">
             {logo ? (
               <Image
@@ -164,7 +161,6 @@ function ReservationCard({ res }: { res: Reservation }) {
             </div>
           </div>
 
-          {/* 3) STATUS (top-right) + MORE INFO (bottom-right) */}
           <div className="order-3 md:order-3 flex flex-col items-end justify-between">
             {res.status === "Paid" ? (
               <span className="inline-flex items-center gap-1 text-green-700">

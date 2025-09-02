@@ -4,18 +4,16 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 export default function SplashScreen() {
-  // mounted = render overlay; fade = animate opacity to 0 before unmount
   const [mounted, setMounted] = useState(false);
   const [fade, setFade] = useState(false);
 
   useEffect(() => {
-    // Show only on the first load in this tab. Use localStorage if you want cross-session.
     if (sessionStorage.getItem("cayenne:splash-seen")) return;
 
-    setMounted(true); // mount overlay
-    const t1 = setTimeout(() => setFade(true), 1100); // start fade-out
+    setMounted(true);
+    const t1 = setTimeout(() => setFade(true), 1100);
     const t2 = setTimeout(() => {
-      setMounted(false); // unmount
+      setMounted(false);
       sessionStorage.setItem("cayenne:splash-seen", "1");
     }, 1700);
 
@@ -35,7 +33,6 @@ export default function SplashScreen() {
                   }`}
       aria-label="Loading"
     >
-      {/* Center logo */}
       <div className="flex flex-col items-center justify-center">
         <Image
           src="/logo.png"
@@ -47,7 +44,6 @@ export default function SplashScreen() {
         />
       </div>
 
-      {/* © footer text */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-gray-700">
         © Cayenne 2025
       </div>

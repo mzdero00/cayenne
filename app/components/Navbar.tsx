@@ -1,4 +1,3 @@
-// app/components/Navbar.tsx (SERVER)
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
@@ -38,7 +37,6 @@ export default async function Navbar({ solid = false }: { solid?: boolean }) {
   const items: DbItem[] = ((rows ?? []) as DbItem[]).filter((it) => {
     if (it.require_auth && !user) return false;
 
-    // roles may be null/undefined or an empty array
     if (Array.isArray(it.roles) && it.roles.length > 0) {
       if (!user) return false;
       const overlap = it.roles.some((role: string) => appRoles.includes(role));

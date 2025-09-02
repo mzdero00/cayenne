@@ -1,4 +1,3 @@
-// app/not-found.tsx
 import Image from "next/image";
 import Link from "next/link";
 
@@ -8,7 +7,6 @@ export default function NotFound() {
       className="min-h-screen flex flex-col bg-[#f2f3f4]"
       aria-labelledby="nf-title"
     >
-      {/* Centered content */}
       <section className="flex-1 grid place-items-center px-6 py-14 md:py-20">
         <div className="w-full max-w-xl text-center">
           <h1
@@ -45,7 +43,6 @@ export default function NotFound() {
         </div>
       </section>
 
-      {/* Brand mark & copyright */}
       <footer className="pb-10 flex flex-col items-center gap-3">
         <Image
           src="/logo.png"
